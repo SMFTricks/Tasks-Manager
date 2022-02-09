@@ -1,8 +1,6 @@
 <?php
 
 /**
- * install.php
- *
  * @package Tasks Manager
  * @version 1.0
  * @author Diego Andrés <diegoandres_cortes@outlook.com>
@@ -332,6 +330,9 @@
 					'columns' => ['timesheet_id']
 				],
 			],
+			'if_exists' => 'ignore',
+			'error' => 'fatal',
+			'parameters' => [],
 		];
 
 		// Installing
