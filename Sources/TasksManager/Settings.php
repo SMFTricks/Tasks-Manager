@@ -37,7 +37,7 @@ class Settings
 		global $txt;
 
 		// Page setup
-		View::page_setup('permissions', 'show_settings');
+		View::page_setup('permissions', 'show_settings', null, null, 'permissions');
 
 		// Can you manage permissions?
 		isAllowedTo('manage_permissions');
@@ -56,7 +56,7 @@ class Settings
 		global $txt;
 
 		// Page setup
-		View::page_setup('config', 'show_settings');
+		View::page_setup('config', 'show_settings', null, null, 'settings');
 		
 		$config_vars = [
 			['text', 'tppm_title', 'subtext' => $txt['tppm_title_desc']],
