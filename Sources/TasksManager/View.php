@@ -47,6 +47,9 @@ class View
 
 		// Menu
 		$this->areas();
+
+		// Hide Search
+		addInlineCss('.admin_search { display: none; }');
 	}
 
 	private function actions()
@@ -57,6 +60,8 @@ class View
 			'permissions' => 'Settings::permissions',
 			'projects' => 'Projects::list',
 			'categories' => 'Categories::main',
+			'status' => 'Status::main',
+			'types' => 'Types::main',
 		];
 
 		// Get the current action
@@ -101,9 +106,21 @@ class View
 							'add' => [$txt['TasksManager_add_category']],
 						],
 					],
-					'statuses' => [
+					'status' => [
 						'label' => $txt['TasksManager_statuses'],
 						'icon' => 'warning',
+						'subsections' => [
+							'index' => [$txt['TasksManager_status_list']],
+							'add' => [$txt['TasksManager_status_add']],
+						],
+					],
+					'types' => [
+						'label' => $txt['TasksManager_types'],
+						'icon' => 'logs',
+						'subsections' => [
+							'index' => [$txt['TasksManager_types_index']],
+							'add' => [$txt['TasksManager_add_type']],
+						],
 					],
 				],
 			],
