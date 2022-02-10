@@ -36,9 +36,6 @@ class Categories
 			'delete' => 'delete',
 			'deletep' => 'delete',
 		];
-
-		// Hide Search
-		addInlineCss('.admin_search { display: none; }');
 	}
 
 	public function main()
@@ -73,8 +70,8 @@ class Categories
 		// List
 		$listOptions = [
 			'id' => 'projects_categories',
-			'title' => $txt['TasksManager_projects_cat'],
-			'items_per_page' =>!empty($modSettings['tppm_items_per_page']) ? $modSettings['tppm_items_per_page'] : 20,
+			'title' => $txt['TasksManager_categories'] . ' - ' . $txt['TasksManager_projects_cat'],
+			'items_per_page' => !empty($modSettings['tppm_items_per_page']) ? $modSettings['tppm_items_per_page'] : 20,
 			'base_href' => $scripturl . '?action=tasksmanager;area=categories;sa=projects',
 			'default_sort_col' => 'name',
 			'get_items' => [
@@ -96,8 +93,8 @@ class Categories
 						'db' => 'category_name',
 					],
 					'sort' => [
-						'default' => 'category_name',
-						'reverse' => 'category_name DESC',
+						'default' => 'category_name DESC',
+						'reverse' => 'category_name',
 					],
 				],
 				'modify' => [
@@ -109,7 +106,7 @@ class Categories
 						'sprintf' => [
 							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=categories;sa=editp;id=%1$s">' . $txt['modify'] . '</a>',
 							'params' => [
-								'category_id' => true,
+								'category_id' => false,
 							],
 						],
 						'class' => 'centertext',
@@ -126,9 +123,9 @@ class Categories
 					],
 					'data' => [
 						'sprintf' => [
-							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=categories;sa=deletep;id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '">' . $txt['delete'] . '</a>',
+							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=categories;sa=deletep;id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['quickmod_confirm'] . '\');">' . $txt['delete'] . '</a>',
 							'params' => [
-								'category_id' => true,
+								'category_id' => false,
 							],
 						],
 						'class' => 'centertext',
@@ -162,7 +159,7 @@ class Categories
 		// List
 		$listOptions = [
 			'id' => 'projects_tasks',
-			'title' => $txt['TasksManager_tasks_cat'],
+			'title' => $txt['TasksManager_categories'] . ' - ' . $txt['TasksManager_tasks_cat'],
 			'items_per_page' =>!empty($modSettings['tppm_items_per_page']) ? $modSettings['tppm_items_per_page'] : 20,
 			'base_href' => $scripturl . '?action=tasksmanager;area=categories;sa=tasks',
 			'default_sort_col' => 'name',
@@ -243,7 +240,7 @@ class Categories
 		global $context, $scripturl, $txt;
 
 		// Page setup
-		View::page_setup('categories', 'manage', $_REQUEST['sa'] . '_category', '?action=tasksmanager;area=categories;sa=' . $_REQUEST['sa'], 'settings');
+		View::page_setup('categories', 'manage', $_REQUEST['sa'] . '_category', '?action=tasksmanager;area=categories;sa=' . $_REQUEST['sa'] . (!empty($_REQUEST['id']) ? ';id=' . $_REQUEST['id'] : ''), 'settings');
 
 		// Editing?
 		if (isset($_REQUEST['sa']) && ($_REQUEST['sa'] == 'edit' || $_REQUEST['sa'] == 'editp'))
@@ -255,6 +252,7 @@ class Categories
 			// Set the active tab
 			$context[$context['tasks_menu_name']]['current_subsection'] = $_REQUEST['sa'] == 'editp' ? 'projects' : 'tasks';
 			
+			// Get the category
 			$context['tasks_pp_category'] = ($_REQUEST['sa'] == 'editp' ? $this->GetprojectCategories(0, 1, 'c.category_id', 'WHERE c.category_id = {int:cat}', ['cat' => (int) $_REQUEST['id']]) : $this->GettasksCategories(0, 1, 'c.task_cat_id', 'WHERE c.task_cat_id = {int:cat}', ['cat' => (int) $_REQUEST['id']]));
 
 			// No category?
