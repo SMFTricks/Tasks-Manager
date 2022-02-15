@@ -156,7 +156,7 @@ class Types
 				fatal_lang_error('TasksManager_no_type');
 
 			// Get the type
-			$context['tasks_pp_type'] = Types::getTypes(0, 1, 't.type_id', 'WHERE t.type_id= {int:id}', ['id' => (int) $_REQUEST['id']]);
+			$context['tasks_pp_type'] = Types::getTypes(0, 1, 't.type_id', 'WHERE t.type_id = {int:id}', ['id' => (int) $_REQUEST['id']]);
 
 			// No type?
 			if (empty($context['tasks_pp_type']))
@@ -202,7 +202,7 @@ class Types
 
 		// Type name?
 		if (empty($_REQUEST['type_name']))
-			fatal_lang_error('TasksManager_no_type_name');
+			fatal_lang_error('TasksManager_no_type_name', false);
 		else
 			$type_name = $smcFunc['htmlspecialchars']($_REQUEST['type_name'], ENT_QUOTES);
 
@@ -263,7 +263,7 @@ class Types
 
 		$result = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$result[] = $row;
+			$result[$row['type_id']] = $row;
 
 		$smcFunc['db_free_result']($request);
 
