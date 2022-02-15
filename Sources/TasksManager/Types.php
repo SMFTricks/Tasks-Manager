@@ -153,14 +153,14 @@ class Types
 		{
 			// Type id
 			if (!isset($_REQUEST['id']) || empty($_REQUEST['id']))
-				fatal_lang_error('TasksManager_no_type');
+				fatal_lang_error('TasksManager_no_type', false);
 
 			// Get the type
 			$context['tasks_pp_type'] = Types::getTypes(0, 1, 't.type_id', 'WHERE t.type_id = {int:id}', ['id' => (int) $_REQUEST['id']]);
 
 			// No type?
 			if (empty($context['tasks_pp_type']))
-				fatal_lang_error('TasksManager_no_type');
+				fatal_lang_error('TasksManager_no_type', false);
 			else
 				$context['tasks_pp_type'] = $context['tasks_pp_type'][0];
 		}

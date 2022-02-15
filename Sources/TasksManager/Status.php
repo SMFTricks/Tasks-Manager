@@ -153,14 +153,14 @@ class Status
 		{
 			// Status id
 			if (!isset($_REQUEST['id']) || empty($_REQUEST['id']))
-				fatal_lang_error('TasksManager_no_status');
+				fatal_lang_error('TasksManager_no_status', false);
 
 			// Get the status
 			$context['tasks_pp_status'] = Status::getStatus(0, 1, 's.status_id', 'WHERE s.status_id = {int:id}', ['id' => (int) $_REQUEST['id']]);
 
 			// No status? Sad
 			if (empty($context['tasks_pp_status']))
-				fatal_lang_error('TasksManager_no_status');
+				fatal_lang_error('TasksManager_no_status', false);
 			else
 				$context['tasks_pp_status'] = $context['tasks_pp_status'][0];
 		}

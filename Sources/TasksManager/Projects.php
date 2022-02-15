@@ -79,14 +79,14 @@ class Projects
 		{
 			// Type id
 			if (!isset($_REQUEST['id']) || empty($_REQUEST['id']))
-				fatal_lang_error('TasksManager_no_project');
+				fatal_lang_error('TasksManager_no_project', false);
 
 			// Get the type
 			$context['tasks_pp_project'] = Projects::getProjects(0, 1, 'p.project_id', 'WHERE p.project_id = {int:id}', ['id' => (int) $_REQUEST['id']]);
 
 			// No type?
 			if (empty($context['tasks_pp_project']))
-				fatal_lang_error('TasksManager_no_project');
+				fatal_lang_error('TasksManager_no_project', false);
 			else
 				$context['tasks_pp_project'] = $context['tasks_pp_project'][0];
 		}
