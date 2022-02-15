@@ -202,7 +202,7 @@ class Status
 
 		// Status name?
 		if (empty($_REQUEST['status_name']))
-			fatal_lang_error('TasksManager_no_status_name');
+			fatal_lang_error('TasksManager_no_status_name', false);
 		else
 			$status_name = $smcFunc['htmlspecialchars']($_REQUEST['status_name'], ENT_QUOTES);
 
@@ -263,7 +263,7 @@ class Status
 
 		$result = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$result[] = $row;
+			$result[$row['status_id']] = $row;
 
 		$smcFunc['db_free_result']($request);
 
