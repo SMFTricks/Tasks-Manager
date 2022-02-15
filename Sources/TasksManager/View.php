@@ -58,7 +58,7 @@ class View
 			'main' => 'View::all',
 			'config' => 'Settings::config',
 			'permissions' => 'Settings::permissions',
-			'projects' => 'Projects::list',
+			'projects' => 'Projects::main',
 			'categories' => 'Categories::main',
 			'status' => 'Status::main',
 			'types' => 'Types::main',
@@ -81,6 +81,11 @@ class View
 					'projects' => [
 						'label' => $txt['TasksManager_projects'],
 						'amt' => 0,
+						'icon' => 'reports',
+						'subsections' => [
+							'index' => [$txt['TasksManager_projects_index']],
+							'add' => [$txt['TasksManager_projects_add'], 'tasksmanager_can_edit'],
+						],
 					],
 					'tasks' => [
 						'label' => $txt['TasksManager_tasks'],
