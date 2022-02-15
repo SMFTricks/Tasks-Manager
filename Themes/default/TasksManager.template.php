@@ -70,13 +70,29 @@ function template_manage()
 
 				foreach ($setting['options'] as $option => $value)
 					echo '
-						<option value="', $value, '"', (isset($setting['selected']) && $_REQUEST['selected'] === $value ? ' selected="selected"' : ''), '>', $option, '</option>';
+						<option value="', $value, '"', (isset($setting['value']) && $setting['value'] == $value ? ' selected="selected"' : ''), '>', $option, '</option>';
 
 					echo '
 					</select>';
-				}
+			}
+
+			// Textarea
+			elseif ($setting['type'] == 'textarea')
+			{
+					echo '
+					<textarea name="', $name, '" id="tasks_', $name, '">', isset($setting['value']) ? $setting['value'] : '', '</textarea>';
+			}
+
+			// Time
+			elseif ($setting['type']  == 'time')
+			{
+				echo '
+					<div class="event_options_left" id="event_time_input">
+						<input type="text" name="', $name, '" id="tasks_', $name, '" maxlength="10" value="', $setting['value'], '" tabindex="', $context['tabindex']++, '" class="date_input start" data-type="date">
+					</div>';
+			}
 				
-				// Text, number, etc
+			// Text, number, etc
 			else
 				echo '
 					<input type="', $setting['type'], '" id="tasks_', $name, '" name="', $name, '" value="', $setting['value'], '"', (!isset($setting['size']) ? '' : 'size="' . $setting['size'] . '"'), ' />';
