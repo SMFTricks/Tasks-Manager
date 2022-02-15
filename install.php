@@ -30,12 +30,12 @@
 					'size' => 8,
 					'auto' => true,
 					'unsigned' => true,
-					'not_null' => true,
 				],
 				[
 					'name' => 'project_title',
 					'type' => 'varchar',
 					'size' => 255,
+					'not_null' => true,
 				],
 				[
 					'name' => 'project_picture',
@@ -47,7 +47,6 @@
 					'type' => 'tinyint',
 					'size' => 2,
 					'unsigned' => true,
-					'not_null' => true,
 					'default' => 0,
 				],
 				[
@@ -55,7 +54,6 @@
 					'type' => 'mediumint',
 					'size' => 8,
 					'unsigned' => true,
-					'not_null' => true,
 					'default' => 0,
 				],
 				[
@@ -69,6 +67,7 @@
 				[
 					'name' => 'description',
 					'type' => 'text',
+					'not_null' => true,
 				],
 				[
 					'name' => 'related_items',
@@ -79,7 +78,6 @@
 					'type' => 'mediumint',
 					'size' => 8,
 					'unsigned' => true,
-					'not_null' => true,
 					'default' => 0,
 				],
 				[
@@ -87,7 +85,6 @@
 					'type' => 'mediumint',
 					'size' => 8,
 					'unsigned' => true,
-					'not_null' => true,
 					'default' => 0,
 				]
 			],
@@ -116,14 +113,12 @@
 					'size' => 8,
 					'auto' => true,
 					'unsigned' => true,
-					'not_null' => true,
 				],
 				[
 					'name' => 'project_id',
 					'type' => 'mediumint',
 					'size' => 8,
 					'unsigned' => true,
-					'not_null' => true,
 					'default' => 0,
 				],
 				[
@@ -131,17 +126,18 @@
 					'type' => 'mediumint',
 					'size' => 8,
 					'unsigned' => true,
-					'not_null' => true,
 					'default' => 0,
 				],
 				[
 					'name' => 'task_name',
 					'type' => 'varchar',
 					'size' => 255,
+					'not_null' => true,
 				],
 				[
 					'name' => 'task_desc',
 					'type' => 'text',
+					'not_null' => true,
 				],
 				[
 					'name' => 'start_date',
@@ -154,13 +150,13 @@
 				[
 					'name' => 'estimated_hrs',
 					'type'  => 'time',
+					'not_null' => true,
 				],
 				[
 					'name' => 'task_status_id',
 					'type' => 'mediumint',
 					'size' => 8,
 					'unsigned' => true,
-					'not_null' => true,
 					'default' => 0,
 				],
 			],
@@ -189,12 +185,12 @@
 					'size' => 8,
 					'auto' => true,
 					'unsigned' => true,
-					'not_null' => true,
 				],
 				[
 					'name' => 'type_name',
 					'type' => 'varchar',
 					'size' => 80,
+					'not_null' => true,
 				],
 			],
 			'indexes' => [
@@ -218,12 +214,12 @@
 					'size' => 8,
 					'auto' => true,
 					'unsigned' => true,
-					'not_null' => true,
 				],
 				[
 					'name' => 'category_name',
 					'type' => 'varchar',
 					'size' => 80,
+					'not_null' => true,
 				],
 			],
 			'indexes' => [
@@ -247,12 +243,12 @@
 					'size' => 8,
 					'auto' => true,
 					'unsigned' => true,
-					'not_null' => true,
 				],
 				[
 					'name' => 'status_name',
 					'type' => 'varchar',
 					'size' => 50,
+					'not_null' => true,
 				],
 			],
 			'indexes' => [
@@ -276,12 +272,12 @@
 					'size' => 8,
 					'auto' => true,
 					'unsigned' => true,
-					'not_null' => true,
 				],
 				[
 					'name' => 'category_name',
 					'type' => 'varchar',
 					'size' => 80,
+					'not_null' => true,
 				],
 			],
 			'indexes' => [
@@ -305,14 +301,12 @@
 					'size' => 8,
 					'auto' => true,
 					'unsigned' => true,
-					'not_null' => true,
 				],
 				[
 					'name' => 'task_id',
 					'type' => 'mediumint',
 					'size' => 8,
 					'unsigned' => true,
-					'not_null' => true,
 					'default' => 0,
 				],
 				[
@@ -322,6 +316,7 @@
 				[
 					'name' => 'time_worked',
 					'type' => 'time',
+					'not_null' => true,
 				],
 			],
 			'indexes' => [
