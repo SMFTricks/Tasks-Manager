@@ -379,7 +379,7 @@ class Categories
 
 		$result = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$result[] = $row;
+			$result[$row['category_id']] = $row;
 
 		$smcFunc['db_free_result']($request);
 
@@ -413,7 +413,7 @@ class Categories
 
 		$result = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$result[] = $row;
+			$result[$row['category_id']] = $row;
 
 		$smcFunc['db_free_result']($request);
 
