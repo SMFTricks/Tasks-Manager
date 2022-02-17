@@ -13,10 +13,7 @@ $txt['TasksManager_button'] = 'Tasks Manager';
 $txt['TasksManager_list'] = 'List';
 
 // Tasks and projects
-$txt['TasksManager_tasks'] = 'Tasks';
 $txt['TasksManager_tp_all'] = 'All ';
-$txt['TasksManager_add_task'] = 'Add task';
-$txt['TasksManager_edit_task'] = 'Edit task';
 
 // Projects
 $txt['TasksManager_projects'] = 'Projects';
@@ -28,6 +25,7 @@ $txt['TasksManager_projects_edit'] = 'Edit project';
 $txt['TasksManager_projects_edit_desc'] = 'Here you can edit the project.';
 $txt['TasksManager_projects_title'] = 'Project title';
 $txt['TasksManager_projects_picture'] = 'Project picture';
+$txt['TasksManager_projects_picture_desc'] = 'Add the link to an icon to use as the project picture. <br><em>Recommended size: 64x64px or smaller</em>';
 $txt['TasksManager_projects_description'] = 'Project description';
 $txt['TasksManager_projects_category'] = 'Project category';
 $txt['TasksManager_projects_no_category'] = 'No category';
@@ -35,21 +33,48 @@ $txt['TasksManager_projects_type'] = 'Project type';
 $txt['TasksManager_projects_no_type'] = 'No type';
 $txt['TasksManager_projects_status'] = 'Project status';
 $txt['TasksManager_projects_no_status'] = 'No status';
-$txt['TasksManager_projects_start_date'] = 'Project start date';
-$txt['TasksManager_projects_end_date'] = 'Project end date';
+$txt['TasksManager_projects_start_date'] = 'Start date';
+$txt['TasksManager_projects_end_date'] = 'End date';
+$txt['TasksManager_projects_added'] = 'Project added';
+$txt['TasksManager_projects_updated'] = 'Project updated';
+$txt['TasksManager_projects_deleted'] = 'Project deleted';
+$txt['TasksManager_projects_details'] = 'Project details';
+
+// Tasks
+$txt['TasksManager_tasks'] = 'Tasks';
+$txt['TasksManager_tasks_index'] = 'View tasks';
+$txt['TasksManager_tasks_index_desc'] = 'Here you can see all the tasks added.';
+$txt['TasksManager_tasks_add'] = 'Add task';
+$txt['TasksManager_tasks_add_desc'] = 'Here you can add a new task.';
+$txt['TasksManager_tasks_edit'] = 'Edit task';
+$txt['TasksManager_tasks_edit_desc'] = 'Here you can edit the task.';
+$txt['TasksManager_tasks_name'] = 'Task name';
+$txt['TasksManager_tasks_description'] = 'Task description';
+$txt['TasksManager_tasks_project'] = 'Task project';
+$txt['TasksManager_tasks_no_project'] = 'No project';
+$txt['TasksManager_tasks_category'] = 'Task category';
+$txt['TasksManager_tasks_status'] = 'Task status';
+$txt['TasksManager_tasks_estimated_hours'] = 'Estimated hours';
+$txt['TasksManager_tasks_added'] = 'Task added';
+$txt['TasksManager_tasks_updated'] = 'Task updated';
+$txt['TasksManager_tasks_deleted'] = 'Task deleted';
+$txt['TasksManager_tasks_details'] = 'Task details';
 
 // Categories
 $txt['TasksManager_categories'] = 'Categories';
+$txt['TasksManager_category'] = 'Category';
+$txt['TasksManager_uncategorized'] = 'Uncategorized';
+$txt['TasksManager_categories_index'] = 'View categories';
 $txt['TasksManager_categories_desc'] = 'Here you can see a list of categories and manage them accordingly.';
 $txt['TasksManager_add_category'] = 'Add category';
 $txt['TasksManager_add_category_desc'] = 'Here you can add a new category.';
 $txt['TasksManager_edit_category'] = 'Edit category';
 $txt['TasksManager_edit_category_desc'] = 'Edit the name of the category.';
-$txt['TasksManager_editp_category'] = $txt['TasksManager_edit_category'];
-$txt['TasksManager_editp_category_desc'] = $txt['TasksManager_edit_category_desc'];
-$txt['TasksManager_projects_cat'] = 'Projects';
+$txt['TasksManager_editp_category'] = 'Edit project category';
+$txt['TasksManager_editp_category_desc'] = 'Edit the name of the project category.';
+$txt['TasksManager_projects_cat'] = 'Projects Categories';
 $txt['TasksManager_projects_cat_desc'] = 'Here you can see the list of categories for the projects.';
-$txt['TasksManager_tasks_cat'] = 'Tasks';
+$txt['TasksManager_tasks_cat'] = 'Tasks Categories';
 $txt['TasksManager_tasks_cat_desc'] = 'Here you can see the list of categories for the tasks.';
 $txt['TasksManager_category_name'] = 'Category name';
 $txt['TasksManager_category_type'] = 'Category type';
@@ -112,7 +137,9 @@ $txt['cannot_tasksmanager_can_edit'] = 'Sorry, you are not allowed to edit Tasks
 
 // Errors
 $txt['TasksManager_no_project'] = 'No project selected.';
+$txt['TasksManager_no_projects'] = 'No projects have been added.';
 $txt['TasksManager_no_task'] = 'No task selected.';
+$txt['TasksManager_no_tasks'] = 'No tasks have been added.';
 $txt['TasksManager_no_category'] = 'No category selected.';
 $txt['TasksManager_no_category_name'] = 'No category name entered.';
 $txt['TasksManager_no_categories'] = 'No categories have been added.';
@@ -124,3 +151,4 @@ $txt['TasksManager_no_type'] = 'No type selected.';
 $txt['TasksManager_no_type_name'] = 'No type name entered.';
 $txt['TasksManager_no_project_title'] = 'No project title entered.';
 $txt['TasksManager_end_date_before_start_date'] = 'The end date must be after the start date.';
+$txt['TasksManager_no_task_name'] = 'No task name entered.';
