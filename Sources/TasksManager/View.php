@@ -15,7 +15,6 @@ if (!defined('SMF'))
 
 class View
 {
-
 	/**
 	 * @var array The actions of the page 
 	 */
@@ -52,22 +51,36 @@ class View
 		addInlineCss('.admin_search { display: none; }');
 	}
 
+	/**
+	 * View::actions()
+	 * 
+	 * Set the main areas/actions of the page
+	 * 
+	 * @return void
+	 */
 	private function actions()
 	{
 		$this->_actions = [
-			'main' => 'View::all',
 			'config' => 'Settings::config',
 			'permissions' => 'Settings::permissions',
 			'projects' => 'Projects::main',
+			'tasks' => 'Tasks::main',
 			'categories' => 'Categories::main',
 			'status' => 'Status::main',
 			'types' => 'Types::main',
 		];
 
 		// Get the current action
-		$this->_area = isset($_GET['area'], $this->_actions[$_GET['area']]) ? $_GET['area'] : 'main';
+		$this->_area = isset($_GET['area'], $this->_actions[$_GET['area']]) ? $_GET['area'] : 'projects';
 	}
 
+	/**
+	 * View::areas()
+	 * 
+	 *  Populates the menu area array and builds the menu
+	 * 
+	 * @return void
+	 */
 	private function areas()
 	{
 		global $txt, $sourcedir;
@@ -76,11 +89,9 @@ class View
 			'projects' => [
 				'title' => $txt['TasksManager_projects'],
 				'description' => 'Testing',
-				'amt' => 5,
 				'areas' => [
 					'projects' => [
 						'label' => $txt['TasksManager_projects'],
-						'amt' => 0,
 						'icon' => 'reports',
 						'subsections' => [
 							'index' => [$txt['TasksManager_projects_index']],
@@ -89,11 +100,10 @@ class View
 					],
 					'tasks' => [
 						'label' => $txt['TasksManager_tasks'],
-						'amt' => 0,
+						'icon' => 'posts',
 						'subsections' => [
-							'all' => [
-								$txt['TasksManager_add_task']
-							],
+							'index' => [$txt['TasksManager_tasks_index']],
+							'add' => [$txt['TasksManager_tasks_add'], 'tasksmanager_can_edit'],
 						],
 					],
 				],
@@ -164,6 +174,14 @@ class View
 		$context['menu_item_selected'] = $tm_include_data['current_area'];
 	}
 
+	/**
+	 * View::main()
+	 * 
+	 * Provides the basic information for the action
+	 * It also loads the correct function based on the area and subsections
+	 * 
+	 * @return void
+	 */
 	public function main()
 	{
 		global $context, $scripturl, $txt;
@@ -187,7 +205,20 @@ class View
 		call_helper(__NAMESPACE__ . '\\' . $this->_actions[$this->_area] . '#');
 	}
 
-	public static function page_setup($action, $template = null, $title = null, $link = null, $icon = 'help')
+	/**
+	 * View::page_setup()
+	 * 
+	 * Returns the page setup which includes the page title,
+	 * the linktree and the menu data with description and icon.
+	 * 
+	 * @param string $action The page action
+	 * @param string $sub_template The sub_template to use for the page
+	 * @param string $title The page title
+	 * @param string $link The page custom link in case it's not the same as the action
+	 * @param string $icon The page icon
+	 * @return void
+	 */
+	public static function page_setup($action, $sub_template = null, $title = null, $link = null, $icon = 'help')
 	{
 		global $txt, $context, $scripturl;
 
@@ -199,8 +230,8 @@ class View
 			'name' => $txt['TasksManager_' . (!empty($title) ? $title : $action)]
 		];
 		// Template
-		if (!empty($template))
-			$context['sub_template'] = $template;
+		if (!empty($sub_template))
+			$context['sub_template'] = $sub_template;
 
 		// Menu Deets
 		$context['tasks_menu_name'] = 'menu_data_' . $context['max_menu_id'];
@@ -210,14 +241,6 @@ class View
 		];
 		if (isset($txt['TasksManager_' . (!empty($title) ? $title : $action) . '_desc']))
 			$context[$context['tasks_menu_name']]['tab_data']['description'] = $txt['TasksManager_' . (!empty($title) ? $title : $action) . '_desc'];
-	}
-
-	public function all()
-	{
-		global $context, $txt, $scripturl;
-
-		// Page setup
-		$this->page_setup('all', 'list', 'list');
 	}
 
 	/**
