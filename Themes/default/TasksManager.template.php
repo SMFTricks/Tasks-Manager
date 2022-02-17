@@ -56,6 +56,7 @@ function template_manage()
 				echo '
 				<dt>
 					<label for="tasks_', $name, '">', $setting['label'], '</label>
+					', (!empty($setting['description']) ? '<br><span class="smalltext">' . $setting['description'] . '</span>' : ''), '
 				</dt>
 				<dd>';
 			else
