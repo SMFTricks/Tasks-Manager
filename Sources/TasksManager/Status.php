@@ -89,8 +89,8 @@ class Status
 						'db' => 'status_name',
 					],
 					'sort' => [
-						'default' => 'status_name DESC',
-						'reverse' => 'status_name',
+						'default' => 'status_name',
+						'reverse' => 'status_name DESC',
 					],
 				],
 				'modify' => [
@@ -108,8 +108,8 @@ class Status
 						'class' => 'centertext',
 					],
 					'sort' => [
-						'default' => 'status_id DESC',
-						'reverse' => 'status_id',
+						'default' => 'status_id',
+						'reverse' => 'status_id DESC',
 					],
 				],
 				'delete' => [
@@ -162,7 +162,7 @@ class Status
 			if (empty($context['tasks_pp_status']))
 				fatal_lang_error('TasksManager_no_status', false);
 			else
-				$context['tasks_pp_status'] = $context['tasks_pp_status'][0];
+				$context['tasks_pp_status'] = $context['tasks_pp_status'][$_REQUEST['id']];
 		}
 
 		// Settings
@@ -279,7 +279,7 @@ class Status
 			FROM {db_prefix}taskspp_project_status',
 			[]
 		);
-		$rows = $smcFunc['db_num_rows']($request);
+		list($rows) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
 
 		return $rows;
