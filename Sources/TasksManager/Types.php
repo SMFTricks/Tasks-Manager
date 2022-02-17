@@ -89,8 +89,8 @@ class Types
 						'db' => 'type_name',
 					],
 					'sort' => [
-						'default' => 'type_name DESC',
-						'reverse' => 'type_name',
+						'default' => 'type_name',
+						'reverse' => 'type_name DESC',
 					],
 				],
 				'modify' => [
@@ -108,8 +108,8 @@ class Types
 						'class' => 'centertext',
 					],
 					'sort' => [
-						'default' => 'type_id DESC',
-						'reverse' => 'type_id',
+						'default' => 'type_id',
+						'reverse' => 'type_id DESC',
 					],
 				],
 				'delete' => [
@@ -162,7 +162,7 @@ class Types
 			if (empty($context['tasks_pp_type']))
 				fatal_lang_error('TasksManager_no_type', false);
 			else
-				$context['tasks_pp_type'] = $context['tasks_pp_type'][0];
+				$context['tasks_pp_type'] = $context['tasks_pp_type'][$_REQUEST['id']];
 		}
 
 		// Settings
@@ -279,7 +279,7 @@ class Types
 			FROM {db_prefix}taskspp_project_types',
 			[]
 		);
-		$rows = $smcFunc['db_num_rows']($request);
+		list($rows) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
 
 		return $rows;
