@@ -54,6 +54,7 @@ class Integration
 		$buttons['tasksmanager' ] = [
 			'title' => (!empty($modSettings['tppm_title']) ? $modSettings['tppm_title'] : $txt['TasksManager_button']),
 			'href' => $scripturl . '?action=tasksmanager',
+			'icon' => 'reports',
 			'show' => allowedTo('tasksmanager_can_view'),
 		];
 	}
