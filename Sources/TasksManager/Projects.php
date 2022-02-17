@@ -64,6 +64,163 @@ class Projects
 		call_helper(__CLASS__ . '::' . $this->_subactions[isset($_GET['sa'], $this->_subactions[$_GET['sa']]) ? $_GET['sa'] : 'index'] . '#');
 	}
 
+	public function list()
+	{
+		global $scripturl, $context, $context, $sourcedir, $modSettings, $txt;
+
+		// Page setup
+		View::page_setup('projects', 'show_list', 'projects_index', '?action=tasksmanager;area=projects;sa=index', 'reports');
+		
+		// Setup the list
+		require_once($sourcedir . '/Subs-List.php');
+		$context['default_list'] = 'projects_list';
+
+		// List
+		$listOptions = [
+			'id' => 'projects_list',
+			'items_per_page' => !empty($modSettings['tppm_items_per_page']) ? $modSettings['tppm_items_per_page'] : 20,
+			'base_href' => $scripturl . '?action=tasksmanager;area=projects;sa=index',
+			'default_sort_col' => 'title',
+			'get_items' => [
+				'function' => __NAMESPACE__ . '\Projects::getProjects',
+			],
+			'get_count' => [
+				'function' => __NAMESPACE__ . '\Projects::countProjects',
+			],
+			'no_items_label' => $txt['TasksManager_no_projects'],
+			'no_items_align' => 'center',
+			'columns' => [
+				'picture' => [
+					'header' => [
+						'style' => 'width: 64px;',
+					],
+					'data' => [
+						'function' => function ($row) {
+							return (!empty($row['project_picture']) ? '<img style="max-width: 64px; max-height: 64px" src="' . $row['project_picture'] . '" alt="'. $row['project_title'] . '" />' : '');
+						},
+					],
+				],
+				'title' => [
+					'header' => [
+						'value' => $txt['TasksManager_projects_title'],
+						'class' => 'lefttext',
+					],
+					'data' => [
+						'function' => function($row)
+						{
+							$title = '<strong>' . $row['project_title'] . '</strong>';
+
+							$title .= (!empty($row['description']) ? '<br />
+								<span class="smalltext">' . parse_bbc($row['description']) . '</span>' : '');
+
+							return  $title;
+						},
+						'style' => 'width: 50%;',
+					],
+					'sort' => [
+						'default' => 'project_title',
+						'reverse' => 'project_title DESC',
+					],
+				],
+				'details' => [
+					'header' => [
+						'value' => $txt['TasksManager_projects_details'],
+						'class' => 'lefttext',
+					],
+					'data' => [
+						'function' => function($row) use ($txt)
+						{
+							// Category
+							$details = '<strong>'. $txt['TasksManager_category'] . ':</strong> ' . (!empty($row['category_id']) ? $row['category_name'] : $txt['TasksManager_uncategorized']);
+
+							// Type
+							$details .= (!empty($row['type_id']) ? '<br /><strong>' . $txt['TasksManager_projects_type'] . ':</strong> ' . $row['type_name'] : '');
+
+							// Start Date
+							$details .= (!empty($row['start_date']) ? '<br /><strong>' . $txt['TasksManager_projects_start_date'] . ':</strong> ' . $row['start_date'] : '');
+
+							// End Date
+							$details .= (!empty($row['end_date']) ? '<br /><strong>' . $txt['TasksManager_projects_end_date'] . ':</strong> ' . $row['end_date'] : '');
+
+							return  $details;
+						}
+					],
+				],
+				'status' => [
+					'header' => [
+						'value' => $txt['TasksManager_projects_status'],
+					],
+					'data' => [
+						'function' => function($row) use ($txt)
+						{
+							// Status
+							return (!empty($row['status_id']) ? $row['status_name'] : $txt['TasksManager_projects_no_status']);
+						},
+						'class' => 'centertext',
+					],
+					'sort' => [
+						'default' => 'status_name',
+						'reverse' => 'status_name DESC',
+					],
+				],
+				'modify' => [
+					'header' => [
+						'value' => $txt['modify'],
+						'class' => 'centertext',
+						'style' => 'width: 7%;',
+					],
+					'data' => [
+						'sprintf' => [
+							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=projects;sa=edit;id=%1$s">' . $txt['modify'] . '</a>',
+							'params' => [
+								'project_id' => false,
+							],
+						],
+						'class' => 'centertext',
+					],
+					'sort' => [
+						'default' => 'project_id',
+						'reverse' => 'project_id DESC',
+					],
+				],
+				'delete' => [
+					'header' => [
+						'value' => $txt['delete'],
+						'class' => 'centertext',
+						'style' => 'width: 7%;',
+					],
+					'data' => [
+						'sprintf' => [
+							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=projects;sa=delete;id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['quickmod_confirm'] . '\');">' . $txt['delete'] . '</a>',
+							'params' => [
+								'project_id' => false,
+							],
+						],
+						'class' => 'centertext',
+					],
+				],
+			],
+		];
+		// Info?
+		if (isset($_REQUEST['deleted']) || isset($_REQUEST['added']) || isset($_REQUEST['updated']))
+		{
+			$listOptions['additional_rows']['updated'] = [
+				'position' => 'top_of_list',
+				'value' => '<div class="infobox">',
+			];
+			$listOptions['additional_rows']['updated']['value'] .= $txt['TasksManager_projects_' . (!isset($_REQUEST['deleted']) ? (!isset($_REQUEST['added']) ? (!isset($_REQUEST['updated']) ? '' : 'updated') : 'added') : 'deleted')] . '</div>';
+		}
+
+		// Visually remove options if the user doesn't have permissions
+		if (!allowedTo('tasksmanager_can_edit'))
+		{
+			unset($listOptions['columns']['modify']);
+			unset($listOptions['columns']['delete']);
+		}
+
+		createList($listOptions);
+	}
+
 	public function manage()
 	{
 		global $context, $scripturl, $txt, $modSettings;
@@ -88,7 +245,7 @@ class Projects
 			if (empty($context['tasks_pp_project']))
 				fatal_lang_error('TasksManager_no_project', false);
 			else
-				$context['tasks_pp_project'] = $context['tasks_pp_project'][0];
+				$context['tasks_pp_project'] = $context['tasks_pp_project'][$_REQUEST['id']];
 		}
 
 		loadCSSFile('jquery-ui.datepicker.css', [], 'smf_datepicker');
@@ -153,8 +310,9 @@ class Projects
 				'label' => $txt['TasksManager_projects_picture'],
 				'value' => !empty($context['tasks_pp_project']['project_picture']) ? $context['tasks_pp_project']['project_picture'] : '',
 				'type' => 'text',
+				'description' => $txt['TasksManager_projects_picture_desc'],
 			],
-			'description' => [
+			'project_description' => [
 				'label' => $txt['TasksManager_projects_description'],
 				'value' => !empty($context['tasks_pp_project']['description']) ? $context['tasks_pp_project']['description'] : '',
 				'type' => 'textarea',
@@ -254,6 +412,9 @@ class Projects
 	{
 		global $smcFunc;
 
+		// Can you manage tasks?
+		isAllowedTo('tasksmanager_can_edit');
+
 		checkSession();
 		$status = 'updated';
 
@@ -279,14 +440,12 @@ class Projects
 			$smcFunc['db_query']('','
 				UPDATE IGNORE {db_prefix}taskspp_projects
 				SET
-				project_title = {string:project_title},
-				project_picture = {string:project_picture},
-				description = {string:description},
-				category_id = {int:category_id},
-				type_id = {int:type_id},
-				status_id = {int:status_id},
-				start_date = {string:start_date},
-				end_date = {string:end_date}
+					project_title = {string:project_title},
+					project_picture = {string:project_picture},
+					description = {string:description},
+					category_id = {int:category_id},
+					type_id = {int:type_id},
+					status_id = {int:status_id}' . (empty($_REQUEST['start_date']) ? '' : ', start_date = {string:start_date}') . (empty($_REQUEST['end_date']) ? '' : ', end_date = {string:end_date}') . '
 				WHERE project_id = {int:id}',
 				[
 					'id' => (int) $_REQUEST['project_id'],
@@ -304,29 +463,42 @@ class Projects
 		// Adding a type
 		else
 		{
+			// set the data types
+			$pp_columns = [
+				'project_title' => 'string',
+				'project_picture' => 'string',
+				'description' => 'string',
+				'category_id' => 'int',
+				'type_id' => 'int',
+				'status_id' => 'int',
+			];
+			$pp_values = [
+				$project_title,
+				$project_picture,
+				$project_description,
+				!empty($_REQUEST['category_id']) ? (int) $_REQUEST['category_id'] : 0,
+				!empty($_REQUEST['type_id']) ? (int) $_REQUEST['type_id'] : 0,
+				!empty($_REQUEST['status_id']) ? (int) $_REQUEST['status_id'] : 0,
+			];
+
+			// Start Date
+			if (!empty($_REQUEST['start_date']))
+			{
+				$pp_columns['start_date'] = 'string';
+				$pp_values[] = $_REQUEST['start_date'];
+			}
+			// End Date
+			if (!empty($_REQUEST['end_date']))
+			{
+				$pp_columns['end_date'] = 'string';
+				$pp_values[] = $_REQUEST['end_date'];
+			}
+
 			$status = 'added';
 			$smcFunc['db_insert']('ignore',
 				'{db_prefix}taskspp_projects',
-				[
-					'project_title' => 'string',
-					'project_picture' => 'string',
-					'description' => 'string',
-					'category_id' => 'int',
-					'type_id' => 'int',
-					'status_id' => 'int',
-					'start_date' => 'string',
-					'end_date' => 'string',
-				],
-				[
-					$project_title,
-					$project_picture,
-					$project_description,
-					!empty($_REQUEST['category_id']) ? (int) $_REQUEST['category_id'] : 0,
-					!empty($_REQUEST['type_id']) ? (int) $_REQUEST['type_id'] : 0,
-					!empty($_REQUEST['status_id']) ? (int) $_REQUEST['status_id'] : 0,
-					!empty($_REQUEST['start_date']) ? $_REQUEST['start_date'] : '',
-					!empty($_REQUEST['end_date']) ? $_REQUEST['end_date'] : '',
-				],
+				$pp_columns,
+				$pp_values,
 				[]
 			);
 		}
@@ -353,8 +525,12 @@ class Projects
 		$request = $smcFunc['db_query']('', '
 			SELECT
 				p.project_id, p.project_title, p.project_picture, p.view_type, p.category_id,
-				p.start_date, p.end_date, p.description, p.related_items, p.type_id, p.status_id
-			FROM {db_prefix}taskspp_projects AS p' . (!empty($query) ? 
+				p.start_date, p.end_date, p.description, p.related_items, p.type_id, p.status_id,
+				c.category_name, t.type_name, s.status_name
+			FROM {db_prefix}taskspp_projects AS p
+				LEFT JOIN {db_prefix}taskspp_project_categories AS c ON (c.category_id = p.category_id)
+				LEFT JOIN {db_prefix}taskspp_project_types AS t ON (t.type_id = p.type_id)
+				LEFT JOIN {db_prefix}taskspp_project_status AS s ON (s.status_id = p.status_id) ' . (!empty($query) ? 
 				$query : '') . '
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:limit}',
@@ -363,10 +539,52 @@ class Projects
 
 		$result = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$result[] = $row;
+			$result[$row['project_id']] = $row;
 
 		$smcFunc['db_free_result']($request);
 
 		return $result;
+	}
+
+	public static function countProjects()
+	{
+		global $smcFunc;
+
+		$request = $smcFunc['db_query']('', '
+			SELECT COUNT(*)
+			FROM {db_prefix}taskspp_projects',
+			[]
+		);
+		list($rows) = $smcFunc['db_fetch_row']($request);
+		$smcFunc['db_free_result']($request);
+
+		return $rows;
+	}
+
+	public function delete()
+	{
+		global $smcFunc;
+
+		// Can you manage tasks?
+		isAllowedTo('tasksmanager_can_edit');
+
+		// Check the id?
+		if (!isset($_REQUEST['id']) || empty($_REQUEST['id']))
+			fatal_lang_error('TasksManager_no_project', false);
+
+		// Sesh
+		checkSession('get');
+
+		// Delete the category
+		$smcFunc['db_query']('','
+			DELETE FROM {db_prefix}taskspp_projects
+			WHERE project_id = {int:id}',
+			[
+				'id' => (int) $_REQUEST['id'],
+			]
+		);
+
+		// OUT!
+		redirectexit('action=tasksmanager;area=projects;sa=index;deleted');
 	}
 }
