@@ -563,7 +563,7 @@ class Tasks
 
 		// Check the id?
 		if (!isset($_REQUEST['id']) || empty($_REQUEST['id']))
-			fatal_lang_error('TasksManager_no_project', false);
+			fatal_lang_error('TasksManager_no_task', false);
 
 		// Sesh
 		checkSession('get');
