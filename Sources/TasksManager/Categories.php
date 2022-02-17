@@ -93,8 +93,8 @@ class Categories
 						'db' => 'category_name',
 					],
 					'sort' => [
-						'default' => 'category_name DESC',
-						'reverse' => 'category_name',
+						'default' => 'category_name',
+						'reverse' => 'category_name DESC',
 					],
 				],
 				'modify' => [
@@ -112,8 +112,8 @@ class Categories
 						'class' => 'centertext',
 					],
 					'sort' => [
-						'default' => 'category_id DESC',
-						'reverse' => 'category_id',
+						'default' => 'category_id',
+						'reverse' => 'category_id DESC',
 					],
 				],
 				'delete' => [
@@ -202,8 +202,8 @@ class Categories
 						'class' => 'centertext',
 					],
 					'sort' => [
-						'default' => 'category_id DESC',
-						'reverse' => 'category_id',
+						'default' => 'category_id',
+						'reverse' => 'category_id DESC',
 					],
 				],
 				'delete' => [
@@ -259,7 +259,7 @@ class Categories
 			if (empty($context['tasks_pp_category']))
 				fatal_lang_error('TasksManager_no_category', false);
 			else
-				$context['tasks_pp_category'] = $context['tasks_pp_category'][0];
+				$context['tasks_pp_category'] = $context['tasks_pp_category'][$_REQUEST['id']];
 		}
 
 		// Settings
@@ -429,7 +429,7 @@ class Categories
 			FROM {db_prefix}taskspp_' . ($type == 'projects' ? 'project' : 'task') .  '_categories',
 			[]
 		);
-		$rows = $smcFunc['db_num_rows']($request);
+		list($rows) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
 
 		return $rows;
