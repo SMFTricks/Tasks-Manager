@@ -66,12 +66,13 @@
 				],
 				[
 					'name' => 'description',
-					'type' => 'text',
-					'not_null' => true,
+					'type' => 'varchar',
+					'size' => 255,
 				],
 				[
-					'name' => 'related_items',
-					'type' => 'text',
+					'name' => 'additional_details',
+					'type' => 'varchar',
+					'size' => 255,
 				],
 				[
 					'name' => 'type_id',
@@ -115,6 +116,14 @@
 					'unsigned' => true,
 				],
 				[
+					'name' => 'topic_id',
+					'type' => 'mediumint',
+					'size' => 8,
+					'unsigned' => true,
+					'not_null' => true,
+					'default' => 0,
+				],
+				[
 					'name' => 'project_id',
 					'type' => 'mediumint',
 					'size' => 8,
@@ -149,8 +158,10 @@
 				],
 				[
 					'name' => 'estimated_hrs',
-					'type'  => 'time',
-					'not_null' => true,
+					'type'  => 'smallint',
+					'size'  => 5,
+					'unsigned' => true,
+					'default' => 0,
 				],
 				[
 					'name' => 'task_status_id',
@@ -311,13 +322,25 @@
 				],
 				[
 					'name' => 'ts_date',
-					'type' => 'date',
+					'type' => 'int',
+					'size' => 10,
+					'unsigned' => true,
+					'default' => 0,
 				],
 				[
-					'name' => 'time_worked',
-					'type' => 'time',
-					'not_null' => true,
+					'name' => 'hours_worked',
+					'type' => 'tinyint',
+					'unsigned' => true,
+					'size' => 3,
+					'default' => 0,
 				],
+				[
+					'name' => 'minutes_worked',
+					'type' => 'tinyint',
+					'unsigned' => true,
+					'size' => 3,
+					'default' => 0,
+				]
 			],
 			'indexes' => [
 				[
