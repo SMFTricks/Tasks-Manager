@@ -75,17 +75,32 @@ class Projects
 		require_once($sourcedir . '/Subs-List.php');
 		$context['default_list'] = 'projects_list';
 
+		// Status
+		$context['tasks_status_list'] = Status::getStatus(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 's.status_name' : 's.status_id DESC');
+		// Categories
+		$context['tasks_category_list'] = Categories::GetprojectCategories(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 'c.category_name' : 'category_id DESC');
+		// Types
+		$context['tasks_type_list'] = Types::getTypes(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 't.type_name' : 'type_id DESC');
+
+		// List
+		$context['template_layers'][] = 'list_selector';
+
+		// Form URL
+		$context['form_url'] = $scripturl . '?action=tasksmanager;area=projects;sa=index' . (isset($_REQUEST['status']) && $_REQUEST['status'] >= 0 ? ';status=' . $_REQUEST['status'] : '' ) . (isset($_REQUEST['category']) && $_REQUEST['category'] >= 0 ? ';category=' . $_REQUEST['category'] : '' ) . (isset($_REQUEST['type']) && $_REQUEST['type'] >= 0 ? ';type=' . $_REQUEST['type'] : '' );
+
 		// List
 		$listOptions = [
 			'id' => 'projects_list',
 			'items_per_page' => !empty($modSettings['tppm_items_per_page']) ? $modSettings['tppm_items_per_page'] : 20,
-			'base_href' => $scripturl . '?action=tasksmanager;area=projects;sa=index',
+			'base_href' => $context['form_url'],
 			'default_sort_col' => 'title',
 			'get_items' => [
 				'function' => __NAMESPACE__ . '\Projects::getProjects',
+				'params' => ['WHERE ' . (isset($_REQUEST['status']) && $_REQUEST['status'] >= 0 ? ' p.status_id = {int:status}' : ' 1=1') . (isset($_REQUEST['category']) && $_REQUEST['category'] >= 0 ? ' AND p.category_id = {int:cat}' : ' AND 1=1') . (isset($_REQUEST['type']) && $_REQUEST['type'] >= 0 ? ' AND p.type_id = {int:type}' : ' AND 1=1'), ['status' => (int) isset($_REQUEST['status']) ? $_REQUEST['status'] : 0, 'cat' => (int) isset($_REQUEST['category']) ? $_REQUEST['category'] : 0, 'type' => (int) isset($_REQUEST['type']) ? $_REQUEST['type'] : 0]],
 			],
 			'get_count' => [
 				'function' => __NAMESPACE__ . '\Projects::countProjects',
+				'params' => ['WHERE ' . (isset($_REQUEST['status']) && $_REQUEST['status'] >= 0 ? ' status_id = {int:status}' : ' 1=1') . (isset($_REQUEST['category']) && $_REQUEST['category'] >= 0 ? ' AND category_id = {int:cat}' : ' AND 1=1') . (isset($_REQUEST['type']) && $_REQUEST['type'] >= 0 ? ' AND type_id = {int:type}' : ' AND 1=1'), ['status' => (int) isset($_REQUEST['status']) ? $_REQUEST['status'] : 0, 'cat' => (int) isset($_REQUEST['category']) ? $_REQUEST['category'] : 0, 'type' => (int) isset($_REQUEST['type']) ? $_REQUEST['type'] : 0]],
 			],
 			'no_items_label' => $txt['TasksManager_no_projects'],
 			'no_items_align' => 'center',
@@ -108,14 +123,19 @@ class Projects
 					'data' => [
 						'function' => function($row)
 						{
-							$title = '<strong>' . $row['project_title'] . '</strong>';
+							$title = '<h6>' . $row['project_title'] . '</h6>';
 
-							$title .= (!empty($row['description']) ? '<br />
-								<span class="smalltext">' . parse_bbc($row['description']) . '</span>' : '');
+							// Description
+							if (!empty($row['description']))
+								$title .= '<span class="smalltext">' . parse_bbc($row['description']) . '</span>';
+							
+							// Additional Details
+							if (!empty($row['additional_details']))
+								$title .= '<hr /><span class="smalltext">' . parse_bbc($row['additional_details']) . '</span>';
 
 							return  $title;
 						},
-						'style' => 'width: 50%;',
+						'style' => 'width: 40%;',
 					],
 					'sort' => [
 						'default' => 'project_title',
@@ -149,12 +169,18 @@ class Projects
 				'status' => [
 					'header' => [
 						'value' => $txt['TasksManager_projects_status'],
+						'style' => 'width: 18%;',
 					],
 					'data' => [
-						'function' => function($row) use ($txt)
+						'function' => function($row) use ($txt, $scripturl)
 						{
 							// Status
-							return (!empty($row['status_id']) ? $row['status_name'] : $txt['TasksManager_projects_no_status']);
+							$status = (!empty($row['status_id']) ? $row['status_name'] : $txt['TasksManager_projects_no_status']);
+
+							// Tasks Link
+							$status .= '<br /><a href="' . $scripturl . '?action=tasksmanager;area=tasks;sa=index;project=' . $row['project_id'] . '">' . $txt['TasksManager_projects_view_tasks'] . '</a>';
+
+							return  $status;
 						},
 						'class' => 'centertext',
 					],
@@ -314,7 +340,14 @@ class Projects
 			],
 			'project_description' => [
 				'label' => $txt['TasksManager_projects_description'],
+				'description' => $txt['TasksManager_projects_description_desc'],
 				'value' => !empty($context['tasks_pp_project']['description']) ? $context['tasks_pp_project']['description'] : '',
+				'type' => 'textarea',
+			],
+			'additional_details' => [
+				'label' => $txt['TasksManager_projects_additional_details'],
+				'description' => $txt['TasksManager_projects_additional_details_desc'],
+				'value' => !empty($context['tasks_pp_project']['additional_details']) ? $context['tasks_pp_project']['additional_details'] : '',
 				'type' => 'textarea',
 			],
 			'category_id' => [
@@ -338,12 +371,12 @@ class Projects
 			'start_date' => [
 				'label' => $txt['TasksManager_projects_start_date'],
 				'value' => !empty($context['tasks_pp_project']['start_date']) ? $context['tasks_pp_project']['start_date'] : '',
-				'type' => 'time',
+				'type' => 'date',
 			],
 			'end_date' => [
 				'label' => $txt['TasksManager_projects_end_date'],
 				'value' => !empty($context['tasks_pp_project']['end_date']) ? $context['tasks_pp_project']['end_date'] : '',
-				'type' => 'time',
+				'type' => 'date',
 			],
 		];
 
@@ -431,6 +464,9 @@ class Projects
 		// Project description?
 		$project_description = !empty($_REQUEST['project_description']) ? $smcFunc['htmlspecialchars']($_REQUEST['project_description'], ENT_QUOTES) : '';
 
+		// Additional details
+		$project_details = !empty($_REQUEST['additional_details']) ? $smcFunc['htmlspecialchars']($_REQUEST['additional_details'], ENT_QUOTES) : '';
+
 		// Project picture?
 		$project_picture = !empty($_REQUEST['project_picture']) ? $smcFunc['htmlspecialchars']($_REQUEST['project_picture'], ENT_QUOTES) : '';
 
@@ -443,6 +479,7 @@ class Projects
 					project_title = {string:project_title},
 					project_picture = {string:project_picture},
 					description = {string:description},
+					additional_details = {string:additional_details},
 					category_id = {int:category_id},
 					type_id = {int:type_id},
 					status_id = {int:status_id}' . (empty($_REQUEST['start_date']) ? '' : ', start_date = {string:start_date}') . (empty($_REQUEST['end_date']) ? '' : ', end_date = {string:end_date}') . '
@@ -452,6 +489,7 @@ class Projects
 					'project_title' => $project_title,
 					'project_picture' => $project_picture,
 					'description' => $project_description,
+					'additional_details' => $project_details,
 					'category_id' => !empty($_REQUEST['category_id']) ? (int) $_REQUEST['category_id'] : 0,
 					'type_id' => !empty($_REQUEST['type_id']) ? (int) $_REQUEST['type_id'] : 0,
 					'status_id' => !empty($_REQUEST['status_id']) ? (int) $_REQUEST['status_id'] : 0,
@@ -468,6 +506,7 @@ class Projects
 				'project_title' => 'string',
 				'project_picture' => 'string',
 				'description' => 'string',
+				'additional_details' => 'string',
 				'category_id' => 'int',
 				'type_id' => 'int',
 				'status_id' => 'int',
@@ -476,6 +515,7 @@ class Projects
 				$project_title,
 				$project_picture,
 				$project_description,
+				$project_details,
 				!empty($_REQUEST['category_id']) ? (int) $_REQUEST['category_id'] : 0,
 				!empty($_REQUEST['type_id']) ? (int) $_REQUEST['type_id'] : 0,
 				!empty($_REQUEST['status_id']) ? (int) $_REQUEST['status_id'] : 0,
@@ -524,9 +564,9 @@ class Projects
 
 		$request = $smcFunc['db_query']('', '
 			SELECT
-				p.project_id, p.project_title, p.project_picture, p.view_type, p.category_id,
-				p.start_date, p.end_date, p.description, p.related_items, p.type_id, p.status_id,
-				c.category_name, t.type_name, s.status_name
+				p.project_id, p.project_title, p.project_picture, p.view_type,
+				p.category_id, p.start_date, p.end_date, p.description, p.additional_details,
+				p.type_id, p.status_id, c.category_name, t.type_name, s.status_name
 			FROM {db_prefix}taskspp_projects AS p
 				LEFT JOIN {db_prefix}taskspp_project_categories AS c ON (c.category_id = p.category_id)
 				LEFT JOIN {db_prefix}taskspp_project_types AS t ON (t.type_id = p.type_id)
@@ -546,14 +586,22 @@ class Projects
 		return $result;
 	}
 
-	public static function countProjects()
+	public static function countProjects($query = null, $values = null)
 	{
 		global $smcFunc;
 
+		// Project data
+		$data = [];
+
+		// Get the other values as well
+		if (!empty($values) && is_array($values))
+			$data = array_merge($data, $values);
+
 		$request = $smcFunc['db_query']('', '
 			SELECT COUNT(*)
-			FROM {db_prefix}taskspp_projects',
-			[]
+			FROM {db_prefix}taskspp_projects ' . (!empty($query) ? 
+			$query : ''),
+			$data
 		);
 		list($rows) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
