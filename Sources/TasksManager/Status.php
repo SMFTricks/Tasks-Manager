@@ -354,6 +354,25 @@ class Status
 			]
 		);
 
+		// Remove the status from projects
+		$smcFunc['db_query']('','
+			UPDATE {db_prefix}taskspp_projects
+			SET status_id = 0
+			WHERE status_id = {int:id}',
+			[
+				'id' => (int) $_REQUEST['id'],
+			]
+		);
+		// Remove the status from tasks
+		$smcFunc['db_query']('','
+			UPDATE {db_prefix}taskspp_tasks
+			SET task_status_id = 0
+			WHERE task_status_id = {int:id}',
+			[
+				'id' => (int) $_REQUEST['id'],
+			]
+		);
+
 		// OUT!
 		redirectexit('action=tasksmanager;area=status;sa=index;deleted');
 	}
