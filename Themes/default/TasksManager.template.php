@@ -1,15 +1,10 @@
 <?php
 
-function template_list()
-{
-	echo '
-	<div class="windowbg">
-		We are adding a list here, or something similar
-	</div>';
-}
-
 function template_main_above() {}
 
+/**
+ * Wraps the tasks content with a little message at the end
+ */
 function template_main_below()
 {
 	global $context;
@@ -23,23 +18,9 @@ function template_main_below()
 		</div>';
 }
 
-function template_project_manage()
-{
-	global $txt, $context;
-
-	echo '
-	<div class="cat_bar">
-		<h3 class="catbg">
-			', $txt['TasksManager_projects'], '
-		</h3>
-	</div>
-	<div class="windowbg">
-		<form>
-				yayayayaya
-		</form>
-	</div>';
-}
-
+/**
+ * It creates settings for different areas of the tasks when needed
+ */
 function template_manage()
 {
 	global $txt, $context;
@@ -124,6 +105,9 @@ function template_manage()
 	</div>';
 }
 
+/**
+ * The subtemplate for assigning a topic to a task
+ */
 function template_add_topic_above()
 {
 	global $context, $scripturl;
@@ -139,6 +123,9 @@ function template_add_topic_above()
 
 function template_add_topic_below() {}
 
+/**
+ * The layers for adding the filters
+ */
 function template_list_selector_above()
 {
 	global $context, $txt;
