@@ -7,10 +7,10 @@
 
 [hr]
 
-[size=4][color=navy]Introduction[/color][/size]
+[size=4][color=#bf307a]Introduction[/color][/size]
 [size=1em]Tasks Manager lets you configure projects along with assigning individual or multiple tasks to each project. You can create categories and statuses for both projects and categories and filter through them.[/size]
 
-[size=3][color=teal]Features[/color][/size]
+[size=3][color=#1f4882]Features[/color][/size]
 [list]
 [li][size=0.9em]Projects[/size]
 [list]
@@ -38,10 +38,9 @@
 [/li]
 [/list]
 
-
-[size=3][color=maroon]Languages[/color][/size]
-[img]https://www.simplemachines.org/site_images/lang/english.gif[/img]
+[size=3][color=#358234]Localization[/color][/size]
+[img]https://www.simplemachines.org/site_images/lang/english.gif[/img] English
 [hr]
 
-[size=3][color=navy][url="https://github.com/SMFTricks/Tasks-Manager/blob/main/CHANGELOG.md"]Changelog[/url][/color][/size]
-[size=3][color=purple][url="https://github.com/SMFTricks/Tasks-Manager"]GitHub[/url][/color][/size]
+[size=3][url="https://github.com/SMFTricks/Tasks-Manager/blob/main/CHANGELOG.md"][color=#cc5d31]Changelog[/color][/url][/size]
+[size=3][url="https://github.com/SMFTricks/Tasks-Manager"][color=#5e2b82]GitHub[/color][/url][/size]
