@@ -43,5 +43,5 @@
 [img]https://www.simplemachines.org/site_images/lang/english.gif[/img]
 [hr]
 
-[size=3][color=navy][url="https://smftricks.com/index.php?topic=2230.0"]Changelog[/url][/color][/size]
+[size=3][color=navy][url="https://github.com/SMFTricks/Tasks-Manager/blob/main/CHANGELOG.md"]Changelog[/url][/color][/size]
 [size=3][color=purple][url="https://github.com/SMFTricks/Tasks-Manager"]GitHub[/url][/color][/size]
