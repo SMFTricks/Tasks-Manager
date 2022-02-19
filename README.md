@@ -25,7 +25,7 @@ Tasks Manager lets you configure projects along with assigning individual or mul
   - Pagination settings
   - Filter settings
 
-  ### Localization
+### Localization
 - ![English](https://www.simplemachines.org/site_images/lang/english.gif) English
 ---
 ### [Changelog](https://github.com/SMFTricks/Tasks-Manager/blob/main/CHANGELOG.md)
