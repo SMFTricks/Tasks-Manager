@@ -690,9 +690,18 @@ class Projects
 		// Sesh
 		checkSession('get');
 
-		// Delete the category
+		// Delete the project
 		$smcFunc['db_query']('','
 			DELETE FROM {db_prefix}taskspp_projects
+			WHERE project_id = {int:id}',
+			[
+				'id' => (int) $_REQUEST['id'],
+			]
+		);
+		// Remove the project from the tasks
+		$smcFunc['db_query']('','
+			UPDATE {db_prefix}taskspp_tasks
+			SET project_id = 0
 			WHERE project_id = {int:id}',
 			[
 				'id' => (int) $_REQUEST['id'],
