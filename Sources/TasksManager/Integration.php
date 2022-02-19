@@ -23,27 +23,44 @@ class Integration
 		'tasksmanager_can_edit',
 	];
 
+	/**
+	 * Integration::initialize()
+	 * 
+	 * Loads all the hooks and settings for this mod
+	 * @return void
+	 */
 	public static function initialize()
 	{
-		self::hooks();
-	}
-
-	public static function hooks()
-	{
+		// Hooks
 		add_integration_function('integrate_autoload', __CLASS__ . '::autoload', false);
 		add_integration_function('integrate_actions', __CLASS__ . '::actions', false);
 		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menu_buttons', false);
 		add_integration_function('integrate_admin_areas', __CLASS__ . '::language', false);
+		add_integration_function('integrate_helpadmin', __CLASS__ . '::language', false);
 		add_integration_function('integrate_load_permissions', __CLASS__ . '::load_permissions#', false);
 		add_integration_function('integrate_load_illegal_guest_permissions', __CLASS__ . '::illegal_guest#', false);
 		add_integration_function('integrate_mod_buttons', __CLASS__ . '::mod_buttons#', false);
 	}
 
+	/**
+	 * Integration::autoload()
+	 * 
+	 * Add the tasks manager to the autoloader
+	 * @param array $classMap The autoloader map
+	 * @return void
+	 */
 	public static function autoload(&$classMap)
 	{
 		$classMap[__NAMESPACE__ . '\\'] = __NAMESPACE__ . '/';
 	}
 
+	/**
+	 * Integration::menu_buttons()
+	 * 
+	 * Add the tasks button to the menu
+	 * @param array $buttons The forum menu buttons
+	 * @return void
+	 */
 	public static function menu_buttons(&$buttons)
 	{
 		global $scripturl, $txt, $modSettings;
@@ -60,18 +77,39 @@ class Integration
 		];
 	}
 
+	/**
+	 * Integration::actions()
+	 * 
+	 * Add the tasks action
+	 * @param array $actions The forum actions
+	 * @return void
+	 */
 	public static function actions(&$actions)
 	{
 		// The main action
 		$actions['tasksmanager'] = [__NAMESPACE__ . '/View.php', __NAMESPACE__  . '\View::main#'];
 	}
 
+	/**
+	 * Integration::language()
+	 * 
+	 * Load the language using the admin area hooks.
+	 * It's only needed to load the language file in the permissions page.
+	 * It also loads the language for the admin help, because it's a popup duh
+	 */
 	public static function language()
 	{
 		// Language for the permissions
 		loadLanguage('TasksManager/');
 	}
 
+	/**
+	 * Integration::load_permissions()
+	 * 
+	 * Load the permissions
+	 * @param array $permissionGroups
+	 * @param array $permissionList
+	 */
 	public function load_permissions(&$permissionGroups, &$permissionList)
 	{
 		$permissionGroups['membergroup'][] = 'tasksmanager';
@@ -79,6 +117,11 @@ class Integration
 			$permissionList['membergroup'][$permission] = [false, 'tasksmanager'];
 	}
 
+	/**
+	 * Integration::illegal_guest()
+	 * 
+	 * Remove the permissions from guests
+	 */
 	public function illegal_guest()
 	{
 		global $context;
@@ -87,9 +130,16 @@ class Integration
 		$context['non_guest_permissions'][] = 'tasksmanager_can_edit';
 	}
 
+	/**
+	 * Integration::mod_buttons()
+	 * 
+	 * Add the button to link tasks
+	 * @param array $mod_buttons The mod buttons
+	 * @return void
+	 */
 	public function mod_buttons(&$mod_buttons)
 	{
-		global $scripturl, $context, $txt;
+		global $scripturl, $context;
 
 		// Don't do anything if we don't have the permission
 		if (!allowedTo('tasksmanager_can_edit'))
