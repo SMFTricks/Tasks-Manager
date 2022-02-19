@@ -55,7 +55,6 @@ class View
 	 * View::actions()
 	 * 
 	 * Set the main areas/actions of the page
-	 * 
 	 * @return void
 	 */
 	private function actions()
@@ -79,7 +78,6 @@ class View
 	 * View::areas()
 	 * 
 	 *  Populates the menu area array and builds the menu
-	 * 
 	 * @return void
 	 */
 	private function areas()
@@ -189,7 +187,6 @@ class View
 	 * 
 	 * Provides the basic information for the action
 	 * It also loads the correct function based on the area and subsections
-	 * 
 	 * @return void
 	 */
 	public function main()
@@ -227,7 +224,6 @@ class View
 	 * 
 	 * Returns the page setup which includes the page title,
 	 * the linktree and the menu data with description and icon.
-	 * 
 	 * @param string $action The page action
 	 * @param string $sub_template The sub_template to use for the page
 	 * @param string $title The page title
