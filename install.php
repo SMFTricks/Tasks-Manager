@@ -32,6 +32,14 @@
 					'unsigned' => true,
 				],
 				[
+					'name' => 'topic_id',
+					'type' => 'mediumint',
+					'size' => 8,
+					'unsigned' => true,
+					'not_null' => true,
+					'default' => 0,
+				],
+				[
 					'name' => 'project_title',
 					'type' => 'varchar',
 					'size' => 255,
@@ -44,10 +52,7 @@
 				],
 				[
 					'name' => 'view_type',
-					'type' => 'tinyint',
-					'size' => 2,
-					'unsigned' => true,
-					'default' => 0,
+					'type' => 'text',
 				],
 				[
 					'name' => 'category_id',
@@ -96,7 +101,7 @@
 				],
 				[
 					'type' => 'index',
-					'columns' => ['status_id', 'category_id', 'type_id']
+					'columns' => ['status_id', 'category_id', 'type_id', 'topic_id']
 				],
 			],
 			'if_exists' => 'ignore',
@@ -178,7 +183,7 @@
 				],
 				[
 					'type' => 'index',
-					'columns' => ['task_cat_id', 'task_status_id']
+					'columns' => ['task_cat_id', 'task_status_id', 'topic_id', 'project_id']
 				],
 			],
 			'if_exists' => 'ignore',
