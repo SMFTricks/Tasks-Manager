@@ -1,0 +1,45 @@
+[center][url=https://smftricks.com][img]https://smftricks.com/logos/logo.png[/img][/url][/center]
+
+[img]https://img.shields.io/badge/License-MPL 2.0-248049[/img] [img]https://img.shields.io/badge/SMF-2.1-3f73a0[/img]
+
+[b][size=4]Tasks Manager[/size][/b]
+[size=0.8em]Developed by [url=https://smftricks.com/index.php?action=profile;u=1]Diego Andrés[/url][/size]
+
+[hr]
+
+[size=3][color=navy]Introduction[/color][/size]
+[size=8pt]Tasks Manager lets you configure projects along with assigning individual or multiple tasks to each project. You can create categories and statuses for both projects and categories and filter through them.[/size]
+
+[size=3][color=teal]Features[/color][/size]
+[list]
+[li][size=0.9em]Projects[/size]
+[list]
+[li][size=0.8em]Categories[/size][/li]
+[li][size=0.8em]Statuses[/size][/li]
+[li][size=0.8em]Types[/size][/li]
+[li][size=0.8em]Set starting and ending dates[/size][/li]
+[/list]
+[/li]
+[li][size=0.9em]Tasks[/size]
+[list]
+[li][size=0.8em]Categories[/size][/li]
+[li][size=0.8em]Statuses[/size][/li]
+[li][size=0.8em]Set starting and ending dates[/size][/li]
+[li][size=0.8em]Set estimates for completion[/size][/li]
+[li][size=0.8em]Booking log[/size][/li]
+[/list]
+[/li]
+[li][size=0.9em]Settings[/size]
+[li][size=0.8em]Permissions[/size][/li]
+[li][size=0.8em]Pagination settings[/size][/li]
+[li][size=0.8em]Filter settings[/size][/li]
+[/li]
+[/list]
+
+
+[size=3][color=maroon]Languages[/color][/size]
+[img]https://www.simplemachines.org/site_images/lang/english.gif[/img]
+[hr]
+
+[size=3][color=navy][url=https://smftricks.com/index.php?topic=2230.0]Changelog[/url][/color][/size]
+[size=3][color=purple][url=https://github.com/SMFTricks/Tasks-Manager]GitHub[/url][/color][/size]
