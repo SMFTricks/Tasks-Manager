@@ -706,9 +706,17 @@ class Tasks
 		// Sesh
 		checkSession('get');
 
-		// Delete the category
+		// Delete the task
 		$smcFunc['db_query']('','
 			DELETE FROM {db_prefix}taskspp_tasks
+			WHERE task_id = {int:id}',
+			[
+				'id' => (int) $_REQUEST['id'],
+			]
+		);
+		// Remove bookings
+		$smcFunc['db_query']('','
+			DELETE FROM {db_prefix}taskspp_timesheet
 			WHERE task_id = {int:id}',
 			[
 				'id' => (int) $_REQUEST['id'],
