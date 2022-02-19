@@ -2,13 +2,13 @@
 
 [img]https://img.shields.io/badge/License-MIT-248049[/img] [img]https://img.shields.io/badge/Hooks%20Only-Yes-6041a3[/img] [img]https://img.shields.io/badge/SMF-2.1-3f73a0[/img]
 
-[b][size=4]Tasks Manager[/size][/b]
+[b][size=5]Tasks Manager[/size][/b]
 [size=0.8em]Developed by [url="https://smftricks.com/index.php?action=profile;u=1"]Diego Andrés[/url][/size]
 
 [hr]
 
-[size=3][color=navy]Introduction[/color][/size]
-[size=8pt]Tasks Manager lets you configure projects along with assigning individual or multiple tasks to each project. You can create categories and statuses for both projects and categories and filter through them.[/size]
+[size=4][color=navy]Introduction[/color][/size]
+[size=1em]Tasks Manager lets you configure projects along with assigning individual or multiple tasks to each project. You can create categories and statuses for both projects and categories and filter through them.[/size]
 
 [size=3][color=teal]Features[/color][/size]
 [list]
