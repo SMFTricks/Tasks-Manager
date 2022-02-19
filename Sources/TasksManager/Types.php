@@ -354,6 +354,16 @@ class Types
 			]
 		);
 
+		// Remove the type from the projects
+		$smcFunc['db_query']('','
+			UPDATE {db_prefix}taskspp_projects
+			SET type_id = 0
+			WHERE type_id = {int:id}',
+			[
+				'id' => (int) $_REQUEST['id'],
+			]
+		);
+
 		// OUT!
 		redirectexit('action=tasksmanager;area=types;sa=index;deleted');
 	}
