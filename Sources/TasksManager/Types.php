@@ -35,6 +35,12 @@ class Types
 		];
 	}
 
+	/**
+	 * Types::main()
+	 * 
+	 * Setup the types area and load the actions
+	 * @return array
+	 */
 	public function main()
 	{
 		global $context, $txt;
@@ -52,6 +58,12 @@ class Types
 		call_helper(__CLASS__ . '::' . $this->_subactions[isset($_GET['sa'], $this->_subactions[$_GET['sa']]) ? $_GET['sa'] : 'index'] . '#');
 	}
 
+	/**
+	 * Types:list()
+	 * 
+	 * List the types
+	 * @return void
+	 */
 	public function list()
 	{
 		global $scripturl, $context, $context, $sourcedir, $modSettings, $txt;
@@ -141,6 +153,12 @@ class Types
 		createList($listOptions);
 	}
 
+	/**
+	 * Types::manage()
+	 * 
+	 * Add or edit a type
+	 * @return void
+	 */
 	public function manage()
 	{
 		global $context, $scripturl, $txt;
@@ -193,6 +211,12 @@ class Types
 		$context['post_url'] = $scripturl . '?action=tasksmanager;area=types;sa=save';
 	}
 
+	/**
+	 * Types::save()
+	 * 
+	 * Save the new or edited type
+	 * @return void
+	 */
 	public function save()
 	{
 		global $smcFunc;
@@ -236,6 +260,17 @@ class Types
 		redirectexit('action=tasksmanager;area=types;sa=index;' . $status);
 	}
 
+	/**
+	 * Types::getTypes()
+	 * 
+	 * Get the types
+	 * @param int $start The start of the list
+	 * @param int $limit The limit of the list
+	 * @param string $sort The sort order
+	 * @param string $query Any additional queries
+	 * @param array $values The values to be used in the query
+	 * @return void
+	 */
 	public static function getTypes($start, $limit, $sort, $query = null, $values = null)
 	{
 		global $smcFunc;
@@ -270,6 +305,14 @@ class Types
 		return $result;
 	}
 
+	/**
+	 * Types::countTypes()
+	 * 
+	 * Get the total number of types
+	 * @param string $query Any additional queries
+	 * @param array $values The values to be used in the query
+	 * @return int The total number of types
+	 */
 	public static function countTypes()
 	{
 		global $smcFunc;
@@ -285,6 +328,12 @@ class Types
 		return $rows;
 	}
 
+	/**
+	 * Types::delete()
+	 * 
+	 * Delete a type
+	 * @return void
+	 */
 	public function delete()
 	{
 		global $smcFunc;

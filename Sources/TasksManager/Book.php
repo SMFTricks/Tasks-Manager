@@ -34,6 +34,12 @@ class Book
 		];
 	}
 
+	/**
+	 * Book::main()
+	 * 
+	 * Setup the booking area and load the actions
+	 * @return array
+	 */
 	public function main()
 	{
 		global $context, $txt;
@@ -51,6 +57,12 @@ class Book
 		call_helper(__CLASS__ . '::' . $this->_subactions[isset($_GET['sa'], $this->_subactions[$_GET['sa']]) ? $_GET['sa'] : 'log'] . '#');
 	}
 
+	/**
+	 * Book::tasksList()
+	 * 
+	 * Get a list of tasks for a select
+	 * @return void
+	 */
 	private function tasksList()
 	{
 		$pp_tasks = Tasks::getTasks(0, 1000000, 'tk.task_name');
@@ -60,6 +72,12 @@ class Book
 				$this->_tasks[$task['task_name']] = $task['task_id'];
 	}
 
+	/**
+	 * Book:list()
+	 * 
+	 * List the bookings
+	 * @return void
+	 */
 	public function list()
 	{
 		global $scripturl, $context, $context, $sourcedir, $modSettings, $txt;
@@ -182,6 +200,12 @@ class Book
 		createList($listOptions);
 	}
 
+	/**
+	 * Book::manage()
+	 * 
+	 * Create a log entry
+	 * @return void
+	 */
 	public function manage()
 	{
 		global $context, $scripturl, $txt, $modSettings;
@@ -220,6 +244,12 @@ class Book
 		$context['post_url'] = $scripturl . '?action=tasksmanager;area=booking;sa=save';
 	}
 
+	/**
+	 * Book::save()
+	 * 
+	 * Add a log entry
+	 * @return void
+	 */
 	public static function save()
 	{
 		global $smcFunc;
@@ -256,6 +286,17 @@ class Book
 		redirectexit('action=tasksmanager;area=booking;sa=log;added');
 	}
 
+	/**
+	 * Book::getLog()
+	 * 
+	 * Get the booking log
+	 * @param int $start The start of the list
+	 * @param int $limit The limit of the list
+	 * @param string $sort The sort order
+	 * @param string $query Any additional queries
+	 * @param array $values The values to be used in the query
+	 * @return void
+	 */
 	public static function getLog($start, $limit, $sort, $query = null, $values = null)
 	{
 		global $smcFunc;
@@ -291,6 +332,14 @@ class Book
 		return $result;
 	}
 
+	/**
+	 * Book::countLog()
+	 * 
+	 * Get the booking log count
+	 * @param string $query Any additional queries
+	 * @param array $values The values to be used in the query
+	 * @return int The total number of log entries
+	 */
 	public static function countLog($query = null, $values = null)
 	{
 		global $smcFunc;
@@ -314,6 +363,12 @@ class Book
 		return $rows;
 	}
 
+	/**
+	 * Book::delete()
+	 * 
+	 * Delete a log entry from the bookings
+	 * @return void
+	 */
 	public function delete()
 	{
 		global $smcFunc;

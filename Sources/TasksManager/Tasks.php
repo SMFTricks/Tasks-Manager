@@ -55,6 +55,12 @@ class Tasks
 		];
 	}
 
+	/**
+	 * Tasks::main()
+	 * 
+	 * Setup the tasks details and load the action
+	 * @return array
+	 */
 	public function main()
 	{
 		global $context, $txt;
@@ -72,6 +78,12 @@ class Tasks
 		call_helper(__CLASS__ . '::' . $this->_subactions[isset($_GET['sa'], $this->_subactions[$_GET['sa']]) ? $_GET['sa'] : 'index'] . '#');
 	}
 
+	/**
+	 * Tasks::list()
+	 * 
+	 * List the tasks
+	 * @return void
+	 */
 	public function list()
 	{
 		global $scripturl, $context, $context, $sourcedir, $modSettings, $txt;
@@ -262,6 +274,12 @@ class Tasks
 		createList($listOptions);
 	}
 
+	/**
+	 * Tasks:manage()
+	 * 
+	 * Edit or create a task
+	 * @return void
+	 */
 	public function manage()
 	{
 		global $context, $scripturl, $txt, $modSettings;
@@ -406,6 +424,12 @@ class Tasks
 		$context['post_url'] = $scripturl . '?action=tasksmanager;area=tasks;sa=save';
 	}
 
+	/**
+	 * Tasks::categories()
+	 * 
+	 * Load a list of categories for a select
+	 * @return void
+	 */
 	private function categories()
 	{
 		global $txt;
@@ -420,6 +444,12 @@ class Tasks
 				$this->_categories[$category['category_name']] = $category['category_id'];
 	}
 
+	/**
+	 * Tasks::statuses()
+	 * 
+	 * Load a list of statuses for a select
+	 * @return void
+	 */
 	private function statuses()
 	{
 		global $txt;
@@ -434,6 +464,12 @@ class Tasks
 				$this->_statuses[$status['status_name']] = $status['status_id'];
 	}
 
+	/**
+	 * Tasks::projects()
+	 * 
+	 * Load a list of projects for a select
+	 * @return void
+	 */
 	private function projects()
 	{
 		global $txt;
@@ -448,15 +484,29 @@ class Tasks
 				$this->_projects[$project['project_title']] = $project['project_id'];
 	}
 
+	/**
+	 * Tasks::taskList()
+	 * 
+	 * Load a list of tasks for a select
+	 * @return void
+	 */
 	private function tasksList()
 	{
 		$pp_tasks = $this->getTasks(0, 1000000, 'tk.task_name', 'WHERE tk.topic_id = {int:no_topic}', ['no_topic' => 0]);
 		// Add the tasks found
 		if (!empty($pp_tasks))
+		{
 			foreach ($pp_tasks as $task)
 				$this->_tasks[$task['task_name']] = $task['task_id'];
+		}
 	}
 
+	/**
+	 * Tasks::save()
+	 * 
+	 * Save a new or edited task
+	 * @return void
+	 */
 	public static function save()
 	{
 		global $smcFunc;
@@ -553,6 +603,17 @@ class Tasks
 		redirectexit('action=tasksmanager;area=tasks;sa=index;' . $status);
 	}
 
+	/**
+	 * Tasks::getTasks()
+	 * 
+	 * Get the tasks
+	 * @param int $start The start of the list
+	 * @param int $limit The limit of the list
+	 * @param string $sort The sort order
+	 * @param string $query Any additional queries
+	 * @param array $values The values to be used in the query
+	 * @return void
+	 */
 	public static function getTasks($start, $limit, $sort, $query = null, $values = null)
 	{
 		global $smcFunc;
@@ -594,6 +655,14 @@ class Tasks
 		return $result;
 	}
 
+	/**
+	 * Tasks::countTasks()
+	 * 
+	 * Get the tasks total
+	 * @param string $query Any additional queries
+	 * @param array $values The values to be used in the query
+	 * @return int The total number of tasks
+	 */
 	public static function countTasks($query = null, $values = null)
 	{
 		global $smcFunc;
@@ -617,6 +686,12 @@ class Tasks
 		return $rows;
 	}
 
+	/**
+	 * Tasks::delete()
+	 * 
+	 * Delete a task
+	 * @return void
+	 */
 	public function delete()
 	{
 		global $smcFunc;
@@ -644,6 +719,12 @@ class Tasks
 		redirectexit('action=tasksmanager;area=tasks;sa=index;deleted');
 	}
 
+	/**
+	 * Tasks::addtopic()
+	 * 
+	 * Add/link a topic to a task
+	 * @return void
+	 */
 	public function addtopic()
 	{
 		global $smcFunc, $context, $scripturl, $txt;
@@ -713,6 +794,12 @@ class Tasks
 		$context['post_url'] = $scripturl . '?action=tasksmanager;area=tasks;sa=savetopic';
 	}
 
+	/**
+	 * Tasks::savetopic()
+	 * 
+	 * Update the topic value for the task
+	 * @return void
+	 */
 	public function savetopic()
 	{
 		global $smcFunc;
@@ -754,6 +841,12 @@ class Tasks
 		redirectexit('topic=' . $_REQUEST['topic_id'] . '.0');
 	}
 
+	/**
+	 * Tasks::deletetopic()
+	 * 
+	 * Delete the topic from the task
+	 * @return void
+	 */
 	public function deletetopic()
 	{
 		global $smcFunc;

@@ -47,6 +47,12 @@ class Projects
 		];
 	}
 
+	/**
+	 * Projects::main()
+	 * 
+	 * Setup the projects area and load the actions
+	 * @return array
+	 */
 	public function main()
 	{
 		global $context, $txt;
@@ -64,6 +70,12 @@ class Projects
 		call_helper(__CLASS__ . '::' . $this->_subactions[isset($_GET['sa'], $this->_subactions[$_GET['sa']]) ? $_GET['sa'] : 'index'] . '#');
 	}
 
+	/**
+	 * Projects::list()
+	 * 
+	 * List the projects
+	 * @return void
+	 */
 	public function list()
 	{
 		global $scripturl, $context, $context, $sourcedir, $modSettings, $txt;
@@ -247,6 +259,12 @@ class Projects
 		createList($listOptions);
 	}
 
+	/**
+	 * Projects:manage()
+	 * 
+	 * Edit or create a project
+	 * @return void
+	 */
 	public function manage()
 	{
 		global $context, $scripturl, $txt, $modSettings;
@@ -399,6 +417,12 @@ class Projects
 		$context['post_url'] = $scripturl . '?action=tasksmanager;area=projects;sa=save';
 	}
 
+	/**
+	 * Projects::types()
+	 * 
+	 * Get a list of project types for a select
+	 * @return void
+	 */
 	private function types()
 	{
 		global $txt;
@@ -413,6 +437,12 @@ class Projects
 				$this->_types[$type['type_name']] = $type['type_id'];
 	}
 
+	/**
+	 * Projects::categories()
+	 * 
+	 * Get a list of categories for a select
+	 * @return void
+	 */
 	private function categories()
 	{
 		global $txt;
@@ -427,6 +457,12 @@ class Projects
 				$this->_categories[$category['category_name']] = $category['category_id'];
 	}
 
+	/**
+	 * Projects::statuses()
+	 * 
+	 * Get a list of statuses for a select
+	 * @return void
+	 */
 	private function statuses()
 	{
 		global $txt;
@@ -441,6 +477,12 @@ class Projects
 				$this->_statuses[$status['status_name']] = $status['status_id'];
 	}
 
+	/**
+	 * Projects::save()
+	 * 
+	 * Save a new or edited project
+	 * @return void
+	 */
 	public static function save()
 	{
 		global $smcFunc;
@@ -547,6 +589,17 @@ class Projects
 		redirectexit('action=tasksmanager;area=projects;sa=index;' . $status);
 	}
 
+	/**
+	 * Projects::getProjects()
+	 * 
+	 * Get the projects
+	 * @param int $start The start of the list
+	 * @param int $limit The limit of the list
+	 * @param string $sort The sort order
+	 * @param string $query Any additional queries
+	 * @param array $values The values to be used in the query
+	 * @return void
+	 */
 	public static function getProjects($start, $limit, $sort, $query = null, $values = null)
 	{
 		global $smcFunc;
@@ -586,6 +639,14 @@ class Projects
 		return $result;
 	}
 
+	/**
+	 * Projects::countProjects()
+	 * 
+	 * Get the projects total
+	 * @param string $query Any additional queries
+	 * @param array $values The values to be used in the query
+	 * @return int The total number of projects
+	 */
 	public static function countProjects($query = null, $values = null)
 	{
 		global $smcFunc;
@@ -609,6 +670,12 @@ class Projects
 		return $rows;
 	}
 
+	/**
+	 * Projects::delete()
+	 * 
+	 * Delete a project
+	 * @return void
+	 */
 	public function delete()
 	{
 		global $smcFunc;

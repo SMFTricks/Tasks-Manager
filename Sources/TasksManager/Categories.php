@@ -38,6 +38,12 @@ class Categories
 		];
 	}
 
+	/**
+	 * Categories::main()
+	 * 
+	 * Setup the categories area and load the actions
+	 * @return array
+	 */
 	public function main()
 	{
 		global $context, $txt;
@@ -56,6 +62,12 @@ class Categories
 		call_helper(__CLASS__ . '::' . $this->_subactions[isset($_GET['sa'], $this->_subactions[$_GET['sa']]) ? $_GET['sa'] : 'projects'] . '#');
 	}
 
+	/**
+	 * Categories::project()
+	 * 
+	 * Loads the list of project categories
+	 * @return array
+	 */
 	public function project()
 	{
 		global $scripturl, $context, $sourcedir, $modSettings, $txt;
@@ -145,6 +157,12 @@ class Categories
 		createList($listOptions);
 	}
 
+	/**
+	 * Categories::task()
+	 * 
+	 * Loads the list of task categories
+	 * @return array
+	 */
 	public function task()
 	{
 		global $scripturl, $context, $sourcedir, $modSettings, $txt;
@@ -235,6 +253,12 @@ class Categories
 		createList($listOptions);
 	}
 
+	/**
+	 * Categories:manage()
+	 * 
+	 * Edit or create a category
+	 * @return void
+	 */
 	public function manage()
 	{
 		global $context, $scripturl, $txt;
@@ -309,6 +333,12 @@ class Categories
 		$context['post_url'] = $scripturl . '?action=tasksmanager;area=categories;sa=save';
 	}
 
+	/**
+	 * Categories:save()
+	 * 
+	 * Save a category
+	 * @return void
+	 */
 	public function save()
 	{
 		global $smcFunc;
@@ -352,6 +382,17 @@ class Categories
 		redirectexit('action=tasksmanager;area=categories;sa=' . ($_REQUEST['category_type'] == 'project' ? 'projects' : 'tasks') . ';' . $status);
 	}
 
+	/**
+	 * Categories::GetprojectCategories()
+	 * 
+	 * Get the categories for projects
+	 * @param int $start The start of the list
+	 * @param int $limit The limit of the list
+	 * @param string $sort The sort order
+	 * @param string $query Any additional queries
+	 * @param array $values The values to be used in the query
+	 * @return void
+	 */
 	public static function GetprojectCategories($start, $limit, $sort, $query = null, $values = null)
 	{
 		global $smcFunc;
@@ -386,6 +427,17 @@ class Categories
 		return $result;
 	}
 
+	/**
+	 * Categories::GettasksCategories()
+	 * 
+	 * Get the categories for tasks
+	 * @param int $start The start of the list
+	 * @param int $limit The limit of the list
+	 * @param string $sort The sort order
+	 * @param string $query Any additional queries
+	 * @param array $values The values to be used in the query
+	 * @return void
+	 */
 	public static function GettasksCategories($start, $limit, $sort, $query = null, $values = null)
 	{
 		global $smcFunc;
@@ -420,6 +472,13 @@ class Categories
 		return $result;
 	}
 
+	/**
+	 * Categories::GetCategoriesCount()
+	 * 
+	 * Get the total number of categories
+	 * @param string $type The type of category (projects or tasks)
+	 * @return int The total number of categories
+	 */
 	public static function catsCount($type = 'projects')
 	{
 		global $smcFunc;
@@ -435,6 +494,12 @@ class Categories
 		return $rows;
 	}
 
+	/**
+	 * Categories:delete()
+	 * 
+	 * Delete a category
+	 * @return void
+	 */
 	public function delete()
 	{
 		global $smcFunc;

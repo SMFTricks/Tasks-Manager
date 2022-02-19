@@ -32,6 +32,12 @@ class Settings
 		isAllowedTo('tasksmanager_can_edit');
 	}
 
+	/**
+	 * Settings::permissions()
+	 * 
+	 * Display the permissions page
+	 * @return void
+	 */
 	public function permissions()
 	{
 		global $txt;
@@ -51,6 +57,12 @@ class Settings
 		$this->save($config_vars, 'permissions');
 	}
 
+	/**
+	 * Settings::config()
+	 * 
+	 * Display the settings page
+	 * @return void
+	 */
 	public function config()
 	{
 		global $txt;
@@ -75,6 +87,12 @@ class Settings
 		$this->save($config_vars, 'config');
 	}
 
+	/**
+	 * Settings::save
+	 * 
+	 * Save the settings
+	 * @return void
+	 */
 	private function save($config_vars, $sa)
 	{
 		global $context, $scripturl;
