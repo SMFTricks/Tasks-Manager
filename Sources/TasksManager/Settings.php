@@ -60,7 +60,15 @@ class Settings
 		
 		$config_vars = [
 			['text', 'tppm_title', 'subtext' => $txt['tppm_title_desc']],
-			['int', 'tppm_items_per_page', 'subtext' => $txt['tppm_items_per_page_desc']]
+			['int', 'tppm_items_per_page', 'subtext' => $txt['tppm_items_per_page_desc']],
+			'',
+			['int', 'tppm_items_filter', 'subtext' => $txt['tppm_items_filter_desc']],
+			['select', 'tppm_filter_sort', [
+					$txt['tppm_filter_sort_id'],
+					$txt['tppm_filter_sort_name']
+				],
+				'subtext' => $txt['tppm_filter_sort_desc']
+			]
 		];
 
 		// Save
