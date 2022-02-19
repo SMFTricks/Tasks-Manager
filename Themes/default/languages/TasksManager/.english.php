@@ -89,6 +89,7 @@ $txt['TasksManager_category_type'] = 'Category type';
 $txt['TasksManager_category_deleted'] = 'Category deleted';
 $txt['TasksManager_category_updated'] = 'Category updated';
 $txt['TasksManager_category_added'] = 'Category added';
+$txt['TasksManager_category_delete_confirm'] = 'Are you sure you want to delete this category? This will make the relevant projects or tasks uncategorized.';
 
 // Statuses
 $txt['TasksManager_statuses'] = 'Statuses';
