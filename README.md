@@ -1,2 +1,29 @@
-# Tasks-Manager
-Projects and tasks manager mod for SMF
+![SMF Tricks - Free & Premium Mods and Themes for SMF](https://smftricks.com/logos/logo.png)
+
+# Tasks Manager
+![License](https://img.shields.io/badge/License-MIT-248049) ![Hooks Only](https://img.shields.io/badge/Hooks-Yes-6041a3) ![SMF 2.1](https://img.shields.io/badge/SMF-2.1-3f73a0)
+
+Developed by [Diego Andrés](https://github.com/DiegoAndresCortes)
+
+## Introduction
+Tasks Manager lets you configure projects along with assigning individual or multiple tasks to each project. You can create categories and statuses for both projects and categories and filter through them.
+
+### Features
+- Projects
+	- Categories
+	- Statuses
+	- Types
+	- Set starting and ending dates
+- Tasks
+	- Categories
+	- Statuses
+	- Set starting and ending dates
+	- Set estimates for completion
+	- Booking log
+- Settings
+	- Permissions
+	- Pagination settings
+	- Filter settings
+---
+### [Changelog](https://github.com/SMFTricks/Tasks-Manager/blob/main/CHANGELOG.md)
+### [GitHub](https://github.com/SMFTricks/Tasks-Manager)
