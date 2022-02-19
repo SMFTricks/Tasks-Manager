@@ -160,6 +160,7 @@ $txt['tppm_filter_sort_id'] = 'Sort by ID';
 
  // Permissions
 $txt['TasksManager_permissions'] = 'Permissions';
+$txt['TasksManager_permissions_desc'] = 'Here you can configure the permissions for the Tasks Manager.';
 $txt['permissiongroup_tasksmanager'] = 'Tasks Manager Permissions';
 $txt['permissionname_tasksmanager_can_view'] = 'View Tasks Manager';
 $txt['groups_tasksmanager_can_view'] = 'Tasks Manager View';
