@@ -1,9 +1,9 @@
-[center][url=https://smftricks.com][img]https://smftricks.com/logos/logo.png[/img][/url][/center]
+[center][url="https://smftricks.com/"][img]https://smftricks.com/logos/logo.png[/img][/url][/center]
 
-[img]https://img.shields.io/badge/License-MPL 2.0-248049[/img] [img]https://img.shields.io/badge/SMF-2.1-3f73a0[/img]
+[img]https://img.shields.io/badge/License-MIT-248049[/img] [img]https://img.shields.io/badge/Hooks-Yes-6041a3[/img] [img]https://img.shields.io/badge/SMF-2.1-3f73a0[/img]
 
 [b][size=4]Tasks Manager[/size][/b]
-[size=0.8em]Developed by [url=https://smftricks.com/index.php?action=profile;u=1]Diego Andrés[/url][/size]
+[size=0.8em]Developed by [url="https://smftricks.com/index.php?action=profile;u=1"]Diego Andrés[/url][/size]
 
 [hr]
 
@@ -30,9 +30,11 @@
 [/list]
 [/li]
 [li][size=0.9em]Settings[/size]
+[list]
 [li][size=0.8em]Permissions[/size][/li]
 [li][size=0.8em]Pagination settings[/size][/li]
 [li][size=0.8em]Filter settings[/size][/li]
+[/list]
 [/li]
 [/list]
 
@@ -41,5 +43,5 @@
 [img]https://www.simplemachines.org/site_images/lang/english.gif[/img]
 [hr]
 
-[size=3][color=navy][url=https://smftricks.com/index.php?topic=2230.0]Changelog[/url][/color][/size]
-[size=3][color=purple][url=https://github.com/SMFTricks/Tasks-Manager]GitHub[/url][/color][/size]
+[size=3][color=navy][url="https://smftricks.com/index.php?topic=2230.0"]Changelog[/url][/color][/size]
+[size=3][color=purple][url="https://github.com/SMFTricks/Tasks-Manager"]GitHub[/url][/color][/size]
