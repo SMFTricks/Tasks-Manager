@@ -135,7 +135,7 @@ class Categories
 					],
 					'data' => [
 						'sprintf' => [
-							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=categories;sa=deletep;id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['quickmod_confirm'] . '\');">' . $txt['delete'] . '</a>',
+							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=categories;sa=deletep;id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['TasksManager_category_delete_confirm'] . '\');">' . $txt['delete'] . '</a>',
 							'params' => [
 								'category_id' => false,
 							],
@@ -231,7 +231,7 @@ class Categories
 					],
 					'data' => [
 						'sprintf' => [
-							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=categories;sa=delete;id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '">' . $txt['delete'] . '</a>',
+							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=categories;sa=delete;id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['TasksManager_category_delete_confirm'] . '\');">' . $txt['delete'] . '</a>',
 							'params' => [
 								'category_id' => true,
 							],
@@ -514,6 +514,16 @@ class Categories
 		// Delete the category
 		$smcFunc['db_query']('','
 			DELETE FROM {db_prefix}taskspp_' . ($_REQUEST['sa'] == 'deletep'  ? 'project' : 'task') .  '_categories
+			WHERE ' . ($_REQUEST['sa'] == 'deletep' ? 'category_id'  : 'task_cat_id') .  ' = {int:cat}',
+			[
+				'cat' => (int) $_REQUEST['id'],
+			]
+		);
+
+		// Make the project or tasks uncategorized
+		$smcFunc['db_query']('', '
+			UPDATE {db_prefix}taskspp_' . ($_REQUEST['sa'] == 'deletep'  ? 'project' : 'task') .  's
+			SET ' . ($_REQUEST['sa'] == 'deletep' ? 'category_id'  : 'task_cat_id') .  ' = 0
 			WHERE ' . ($_REQUEST['sa'] == 'deletep' ? 'category_id'  : 'task_cat_id') .  ' = {int:cat}',
 			[
 				'cat' => (int) $_REQUEST['id'],
