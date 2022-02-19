@@ -10,20 +10,20 @@ Tasks Manager lets you configure projects along with assigning individual or mul
 
 ### Features
 - Projects
-	- Categories
-	- Statuses
-	- Types
-	- Set starting and ending dates
+  - Categories
+  - Statuses
+  - Types
+  - Set starting and ending dates
 - Tasks
-	- Categories
-	- Statuses
-	- Set starting and ending dates
-	- Set estimates for completion
-	- Booking log
+  - Categories
+  - Statuses
+  - Set starting and ending dates
+  - Set estimates for completion
+  - Booking log
 - Settings
-	- Permissions
-	- Pagination settings
-	- Filter settings
+  - Permissions
+  - Pagination settings
+  - Filter settings
 ---
 ### [Changelog](https://github.com/SMFTricks/Tasks-Manager/blob/main/CHANGELOG.md)
 ### [GitHub](https://github.com/SMFTricks/Tasks-Manager)
