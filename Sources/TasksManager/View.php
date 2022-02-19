@@ -65,6 +65,7 @@ class View
 			'permissions' => 'Settings::permissions',
 			'projects' => 'Projects::main',
 			'tasks' => 'Tasks::main',
+			'booking' => 'Book::main',
 			'categories' => 'Categories::main',
 			'status' => 'Status::main',
 			'types' => 'Types::main',
@@ -104,6 +105,15 @@ class View
 						'subsections' => [
 							'index' => [$txt['TasksManager_tasks_index']],
 							'add' => [$txt['TasksManager_tasks_add'], 'tasksmanager_can_edit'],
+						],
+					],
+					'booking' => [
+						'label' => $txt['TasksManager_booking'],
+						'icon' => 'scheduled',
+						'permission' => 'tasksmanager_can_edit',
+						'subsections' => [
+							'log' => [$txt['TasksManager_booking_log']],
+							'booktime' => [$txt['TasksManager_booking_booktime']],
 						],
 					],
 				],
@@ -184,15 +194,22 @@ class View
 	 */
 	public function main()
 	{
-		global $context, $scripturl, $txt;
+		global $context, $scripturl, $txt, $modSettings;
 
 		// Page title
-		$context['page_title'] = $txt['TasksManager_button'];
+		$context['page_title'] = (!empty($modSettings['tppm_title']) ? $modSettings['tppm_title'] : $txt['TasksManager_button']);
 
 		// Linktree
 		$context['linktree'][] = [
 			'url' => $scripturl . '?action=tasksmanager',
-			'name' => $txt['TasksManager_button']
+			'name' =>(!empty($modSettings['tppm_title']) ? $modSettings['tppm_title'] : $txt['TasksManager_button']),
+		];
+
+		// Menu Deets
+		$context['tasks_menu_name'] = 'menu_data_' . $context['max_menu_id'];
+		$context[$context['tasks_menu_name']]['tab_data'] = [
+			'title' => (!empty($modSettings['tppm_title']) ? $modSettings['tppm_title'] : $txt['TasksManager_button']),
+			'icon_class' => 'main_icons reports',
 		];
 
 		// Add layers... with the copyright and other stuff
