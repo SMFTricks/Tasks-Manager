@@ -3,7 +3,8 @@
 # Tasks Manager
 ![License](https://img.shields.io/badge/License-MIT-248049) ![Hooks Only](https://img.shields.io/badge/Hooks%20Only-Yes-6041a3) ![SMF 2.1](https://img.shields.io/badge/SMF-2.1-3f73a0)
 
-Developed by [Diego Andrés](https://github.com/DiegoAndresCortes)
+* Developed by [Diego Andrés](https://github.com/DiegoAndresCortes)
+* Designed by [Database Dreams](https://www.databasedreams.co.uk/)
 
 ## Introduction
 Tasks Manager lets you configure projects along with assigning individual or multiple tasks to each project. You can create categories and statuses for both projects and categories and filter through them.
