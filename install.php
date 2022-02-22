@@ -72,12 +72,12 @@
 				[
 					'name' => 'description',
 					'type' => 'varchar',
-					'size' => 255,
+					'size' => 450,
 				],
 				[
 					'name' => 'additional_details',
 					'type' => 'varchar',
-					'size' => 255,
+					'size' => 800,
 				],
 				[
 					'name' => 'type_id',
