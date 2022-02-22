@@ -147,7 +147,7 @@ class Projects
 
 							return  $title;
 						},
-						'style' => 'width: 40%;',
+						'style' => 'width: 45%;',
 					],
 					'sort' => [
 						'default' => 'project_title',

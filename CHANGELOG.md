@@ -1,5 +1,10 @@
 # Changelog
 
+#### 1.0.2 - 22 February 2022
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Increased width of tasks and projects name/title.
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed occasional missing language string.
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed redirect link after editing a task.
+
 #### 1.0.1 - 21 February 2022
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Remove auto-complete from date inputs.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Return to filter when editing tasks.

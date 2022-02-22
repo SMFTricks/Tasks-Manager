@@ -141,7 +141,7 @@ class Tasks
 
 							return  $title;
 						},
-						'style' => 'width: 25%;',
+						'style' => 'width: 30%;',
 					],
 					'sort' => [
 						'default' => 'task_name',
@@ -600,7 +600,7 @@ class Tasks
 		}
 
 		// Redirect
-		redirectexit('action=tasksmanager;area=tasks;sa=index;' . $status . $status == 'updated' ? ((!empty($_REQUEST['project_id']) &&  isset($_REQUEST['project_id']) ? ';project=' . (int) $_REQUEST['project_id'] : '') . (!empty($_REQUEST['task_cat_id']) &&  isset($_REQUEST['task_cat_id']) ? ';category=' . (int) $_REQUEST['task_cat_id'] : '')) : '');
+		redirectexit('action=tasksmanager;area=tasks;sa=index;' . $status . ($status == 'updated' ? ((!empty($_REQUEST['project_id']) &&  isset($_REQUEST['project_id']) ? ';project=' . (int) $_REQUEST['project_id'] : '') . (!empty($_REQUEST['task_cat_id']) &&  isset($_REQUEST['task_cat_id']) ? ';category=' . (int) $_REQUEST['task_cat_id'] : '')) : ''));
 	}
 
 	/**

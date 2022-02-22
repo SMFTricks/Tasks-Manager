@@ -141,6 +141,9 @@ class Integration
 	{
 		global $scripturl, $context;
 
+		// Language
+		loadLanguage('TasksManager/');
+
 		// Don't do anything if we don't have the permission
 		if (!allowedTo('tasksmanager_can_edit'))
 			return;
