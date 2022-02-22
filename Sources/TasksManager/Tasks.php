@@ -524,7 +524,7 @@ class Tasks
 			$task_name = $smcFunc['htmlspecialchars']($_REQUEST['task_name'], ENT_QUOTES);
 
 		// Check for dates
-		if (!empty($_REQUEST['start_date']) && !empty($_REQUEST['end_date']) && strtotime($_REQUEST['start_date']) >= strtotime($_REQUEST['end_date']))
+		if (!empty($_REQUEST['start_date']) && !empty($_REQUEST['end_date']) && strtotime($_REQUEST['start_date']) > strtotime($_REQUEST['end_date']))
 			fatal_lang_error('TasksManager_end_date_before_start_date', false);
 
 		// Task description?
@@ -600,7 +600,7 @@ class Tasks
 		}
 
 		// Redirect
-		redirectexit('action=tasksmanager;area=tasks;sa=index;' . $status);
+		redirectexit('action=tasksmanager;area=tasks;sa=index;' . $status . $status == 'updated' ? ((!empty($_REQUEST['project_id']) &&  isset($_REQUEST['project_id']) ? ';project=' . (int) $_REQUEST['project_id'] : '') . (!empty($_REQUEST['task_cat_id']) &&  isset($_REQUEST['task_cat_id']) ? ';category=' . (int) $_REQUEST['task_cat_id'] : '')) : '');
 	}
 
 	/**
