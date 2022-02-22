@@ -1,5 +1,11 @@
 # Changelog
 
+#### 1.0.1 - 21 February 2022
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Remove auto-complete from date inputs.
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Return to filter when editing tasks.
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Improved filter language.
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Allow to use the same date for projects and tasks.
+
 #### 1.0 - 19 February 2022
 - ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) Initial Release
 
