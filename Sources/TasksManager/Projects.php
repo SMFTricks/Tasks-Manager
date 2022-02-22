@@ -500,7 +500,7 @@ class Projects
 			$project_title = $smcFunc['htmlspecialchars']($_REQUEST['project_title'], ENT_QUOTES);
 
 		// Check for dates
-		if (!empty($_REQUEST['start_date']) && !empty($_REQUEST['end_date']) && strtotime($_REQUEST['start_date']) >= strtotime($_REQUEST['end_date']))
+		if (!empty($_REQUEST['start_date']) && !empty($_REQUEST['end_date']) && strtotime($_REQUEST['start_date']) > strtotime($_REQUEST['end_date']))
 			fatal_lang_error('TasksManager_end_date_before_start_date', false);
 
 		// Project description?
