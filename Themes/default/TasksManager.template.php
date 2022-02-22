@@ -75,7 +75,7 @@ function template_manage()
 			{
 				echo '
 					<div class="event_options_left" id="event_time_input">
-						<input type="text" name="', $name, '" id="tasks_', $name, '" maxlength="10" value="', isset($setting['value']) ? $setting['value'] : '', '" tabindex="', $context['tabindex']++, '" class="date_input start" data-type="date">
+						<input type="text" name="', $name, '" id="tasks_', $name, '" maxlength="10" value="', isset($setting['value']) ? $setting['value'] : '', '" tabindex="', $context['tabindex']++, '" class="date_input start" data-type="date" autocomplete="off">
 					</div>';
 			}
 				
@@ -142,7 +142,7 @@ function template_list_selector_above()
 			echo '
 			<select name="category" onchange="submit();">
 				<optgroup label="'. $txt['TasksManager_categories']. '">
-					<option value="-1"'. (!isset($_REQUEST['category']) || $_REQUEST['category'] == -1 ? ' selected="selected"' : ''). '>'. $txt['TasksManager_tp_all']. '</option>
+					<option value="-1"'. (!isset($_REQUEST['category']) || $_REQUEST['category'] == -1 ? ' selected="selected"' : ''). '>'. $txt['TasksManager_categories_all']. '</option>
 					<option value="0"'. (isset($_REQUEST['category']) && $_REQUEST['category'] == 0 ? ' selected="selected"' : ''). '>'. $txt['TasksManager_projects_no_category']. '</option>';
 
 			foreach ($context['tasks_category_list'] as $category)
@@ -160,7 +160,7 @@ function template_list_selector_above()
 			echo '
 			<select name="status" onchange="submit();">
 				<optgroup label="'. $txt['TasksManager_status']. '">
-					<option value="-1"'. (!isset($_REQUEST['status']) || $_REQUEST['status'] == -1 ? ' selected="selected"' : ''). '>'. $txt['TasksManager_tp_all']. '</option>
+					<option value="-1"'. (!isset($_REQUEST['status']) || $_REQUEST['status'] == -1 ? ' selected="selected"' : ''). '>'. $txt['TasksManager_statuses_all']. '</option>
 					<option value="0"'. (isset($_REQUEST['status']) && $_REQUEST['status'] == 0 ? ' selected="selected"' : ''). '>'. $txt['TasksManager_projects_no_status']. '</option>';
 
 			foreach ($context['tasks_status_list'] as $status)
@@ -178,7 +178,7 @@ function template_list_selector_above()
 			echo '
 			<select name="type" onchange="submit();">
 				<optgroup label="'. $txt['TasksManager_types']. '">
-					<option value="-1"'. (!isset($_REQUEST['type']) || $_REQUEST['type'] == -1 ? ' selected="selected"' : ''). '>'. $txt['TasksManager_tp_all']. '</option>
+					<option value="-1"'. (!isset($_REQUEST['type']) || $_REQUEST['type'] == -1 ? ' selected="selected"' : ''). '>'. $txt['TasksManager_types_all']. '</option>
 					<option value="0"'. (isset($_REQUEST['type']) && $_REQUEST['type'] == 0 ? ' selected="selected"' : ''). '>'. $txt['TasksManager_projects_no_type']. '</option>';
 
 			foreach ($context['tasks_type_list'] as $type)
@@ -196,7 +196,7 @@ function template_list_selector_above()
 			echo '
 			<select name="project" onchange="submit();">
 				<optgroup label="'. $txt['TasksManager_projects']. '">
-					<option value="-1"'. (!isset($_REQUEST['project']) || $_REQUEST['project'] == -1 ? ' selected="selected"' : ''). '>'. $txt['TasksManager_tp_all']. '</option>
+					<option value="-1"'. (!isset($_REQUEST['project']) || $_REQUEST['project'] == -1 ? ' selected="selected"' : ''). '>'. $txt['TasksManager_projects_all']. '</option>
 					<option value="0"'. (isset($_REQUEST['project']) && $_REQUEST['project'] == 0 ? ' selected="selected"' : ''). '>'. $txt['TasksManager_tasks_no_project']. '</option>';
 
 			foreach ($context['tasks_projects_list'] as $project)
@@ -214,7 +214,7 @@ function template_list_selector_above()
 			echo '
 			<select name="task" onchange="submit();">
 				<optgroup label="'. $txt['TasksManager_tasks']. '">
-					<option value="-1"'. (!isset($_REQUEST['task']) || $_REQUEST['task'] == -1 ? ' selected="selected"' : ''). '>'. $txt['TasksManager_tp_all']. '</option>';
+					<option value="-1"'. (!isset($_REQUEST['task']) || $_REQUEST['task'] == -1 ? ' selected="selected"' : ''). '>'. $txt['TasksManager_tasks_all']. '</option>';
 
 			foreach ($context['tasks_tasks_list'] as $task)
 				echo '

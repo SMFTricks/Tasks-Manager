@@ -13,11 +13,11 @@ $txt['TasksManager_button'] = 'Tasks Manager';
 $txt['TasksManager_list'] = 'List';
 
 // Tasks and projects
-$txt['TasksManager_tp_all'] = 'All ';
 $txt['TasksManager_tp_filter'] = 'Filter';
 
 // Projects
 $txt['TasksManager_projects'] = 'Projects';
+$txt['TasksManager_projects_all'] = 'All Projects';
 $txt['TasksManager_projects_index'] = 'View projects';
 $txt['TasksManager_projects_index_desc'] = 'Here you can see all the projects added.';
 $txt['TasksManager_projects_add'] = 'Add project';
@@ -47,6 +47,7 @@ $txt['TasksManager_projects_view_tasks'] = 'View tasks';
 
 // Tasks
 $txt['TasksManager_tasks'] = 'Tasks';
+$txt['TasksManager_tasks_all'] = 'All tasks';
 $txt['TasksManager_tasks_index'] = 'View tasks';
 $txt['TasksManager_tasks_index_desc'] = 'Here you can see all the tasks added.';
 $txt['TasksManager_tasks_add'] = 'Add task';
@@ -70,6 +71,7 @@ $txt['TasksManager_tasks_estimated_unknown'] = 'Unknown';
 
 // Categories
 $txt['TasksManager_categories'] = 'Categories';
+$txt['TasksManager_categories_all'] = 'All categories';
 $txt['TasksManager_category'] = 'Category';
 $txt['TasksManager_uncategorized'] = 'Uncategorized';
 $txt['TasksManager_categories_index'] = 'View categories';
@@ -93,6 +95,7 @@ $txt['TasksManager_category_delete_confirm'] = 'Are you sure you want to delete 
 
 // Statuses
 $txt['TasksManager_statuses'] = 'Statuses';
+$txt['TasksManager_statuses_all'] = 'All statuses';
 $txt['TasksManager_status'] = 'Status';
 $txt['TasksManager_status_list'] = 'List';
 $txt['TasksManager_status_list_desc'] = 'Here you can see a list of statuses and manage them accordingly.';
@@ -110,6 +113,7 @@ $txt['TasksManager_status_deleted'] = 'Status deleted';
 
 // Project Types
 $txt['TasksManager_types'] = 'Project Types';
+$txt['TasksManager_types_all'] = 'All types';
 $txt['TasksManager_types_index'] = 'Index';
 $txt['TasksManager_types_index_desc'] = 'Here you can see a list of the project types available.';
 $txt['TasksManager_add_type'] = 'Add type';
@@ -189,7 +193,7 @@ $txt['TasksManager_no_types'] = 'No types have been added.';
 $txt['TasksManager_no_type'] = 'No type selected.';
 $txt['TasksManager_no_type_name'] = 'No type name entered.';
 $txt['TasksManager_no_project_title'] = 'No project title entered.';
-$txt['TasksManager_end_date_before_start_date'] = 'The end date must be after the start date.';
+$txt['TasksManager_end_date_before_start_date'] = 'The end date must be at least the same as the start date.';
 $txt['TasksManager_no_task_name'] = 'No task name entered.';
 $txt['TasksManager_no_topic'] = 'No topic selected.';
 $txt['TasksManager_no_booking'] = 'No booking selected.';
