@@ -356,7 +356,7 @@ class Categories
 		if (!empty($_REQUEST['category_id']))
 		{
 			$smcFunc['db_query']('','
-				UPDATE IGNORE {db_prefix}taskspp_' . ($_REQUEST['category_type'] == 'project'  ? 'project' : 'task') .  '_categories
+				UPDATE {db_prefix}taskspp_' . ($_REQUEST['category_type'] == 'project'  ? 'project' : 'task') .  '_categories
 				SET
 					category_name = {string:category_name}
 				WHERE ' . ($_REQUEST['category_type'] == 'project' ? 'category_id'  : 'task_cat_id') .  ' = {int:cat}',
@@ -370,7 +370,7 @@ class Categories
 		else
 		{
 			$status = 'added';
-			$smcFunc['db_insert']('ignore',
+			$smcFunc['db_insert']('',
 				'{db_prefix}taskspp_' . ($_REQUEST['category_type'] == 'project'  ? 'project' : 'task') .  '_categories',
 				['category_name' => 'string'],
 				[$category_name,],
@@ -391,7 +391,7 @@ class Categories
 	 * @param string $sort The sort order
 	 * @param string $query Any additional queries
 	 * @param array $values The values to be used in the query
-	 * @return void
+	 * @return array The project categories
 	 */
 	public static function GetprojectCategories($start, $limit, $sort, $query = null, $values = null)
 	{
@@ -436,7 +436,7 @@ class Categories
 	 * @param string $sort The sort order
 	 * @param string $query Any additional queries
 	 * @param array $values The values to be used in the query
-	 * @return void
+	 * @return array The task categories
 	 */
 	public static function GettasksCategories($start, $limit, $sort, $query = null, $values = null)
 	{

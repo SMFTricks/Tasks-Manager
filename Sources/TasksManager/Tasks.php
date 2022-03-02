@@ -328,11 +328,11 @@ class Tasks
 				maxDate: "' . $modSettings['cal_maxyear'] . '-12-31",
 				yearRange: "' . $modSettings['cal_minyear'] . ':' . $modSettings['cal_maxyear'] . '",
 				hideIfNoPrevNext: true,
-				monthNames: ["' . implode('", "', $txt['months_titles']) . '"],
-				monthNamesShort: ["' . implode('", "', $txt['months_short']) . '"],
-				dayNames: ["' . implode('", "', $txt['days']) . '"],
-				dayNamesShort: ["' . implode('", "', $txt['days_short']) . '"],
-				dayNamesMin: ["' . implode('", "', $txt['days_short']) . '"],
+				monthNames: ["' . implode('", "', (array) $txt['months_titles']) . '"],
+				monthNamesShort: ["' . implode('", "', (array) $txt['months_short']) . '"],
+				dayNames: ["' . implode('", "', (array) $txt['days']) . '"],
+				dayNamesShort: ["' . implode('", "', (array) $txt['days_short']) . '"],
+				dayNamesMin: ["' . implode('", "', (array) $txt['days_short']) . '"],
 				prevText: "' . $txt['prev_month'] . '",
 				nextText: "' . $txt['next_month'] . '",
 			});
@@ -534,7 +534,7 @@ class Tasks
 		if (!empty($_REQUEST['task_id']))
 		{
 			$smcFunc['db_query']('','
-				UPDATE IGNORE {db_prefix}taskspp_tasks
+				UPDATE {db_prefix}taskspp_tasks
 				SET
 					task_name = {string:task_name},
 					task_desc = {string:task_desc},
@@ -591,7 +591,7 @@ class Tasks
 			}
 
 			$status = 'added';
-			$smcFunc['db_insert']('ignore',
+			$smcFunc['db_insert']('',
 				'{db_prefix}taskspp_tasks',
 				$pp_columns,
 				$pp_values,
@@ -612,7 +612,7 @@ class Tasks
 	 * @param string $sort The sort order
 	 * @param string $query Any additional queries
 	 * @param array $values The values to be used in the query
-	 * @return void
+	 * @return array The tasks
 	 */
 	public static function getTasks($start, $limit, $sort, $query = null, $values = null)
 	{
@@ -640,7 +640,7 @@ class Tasks
 				LEFT JOIN {db_prefix}taskspp_task_categories AS c ON (c.task_cat_id = tk.task_cat_id)
 				LEFT JOIN {db_prefix}taskspp_project_status AS s ON (s.status_id = tk.task_status_id) ' . (!empty($query) ? 
 				$query : '') . '
-			GROUP BY tk.task_id
+			GROUP BY tk.task_id, tk.topic_id, c.category_name, s.status_name, p.project_title
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:limit}',
 			$data
@@ -835,7 +835,7 @@ class Tasks
 
 		// Add the topic to the task
 		$smcFunc['db_query']('','
-			UPDATE IGNORE {db_prefix}taskspp_tasks
+			UPDATE {db_prefix}taskspp_tasks
 			SET
 				topic_id = {int:topic_id}
 			WHERE task_id = {int:id}',
@@ -871,7 +871,7 @@ class Tasks
 
 		// Drop this topic from the task (or tasks lol)
 		$smcFunc['db_query']('','
-			UPDATE IGNORE {db_prefix}taskspp_tasks
+			UPDATE {db_prefix}taskspp_tasks
 			SET
 				topic_id = {int:id}
 			WHERE topic_id = {int:topic_id}',

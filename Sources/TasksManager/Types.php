@@ -234,7 +234,7 @@ class Types
 		if (!empty($_REQUEST['type_id']))
 		{
 			$smcFunc['db_query']('','
-				UPDATE IGNORE {db_prefix}taskspp_project_types
+				UPDATE {db_prefix}taskspp_project_types
 				SET
 				type_name = {string:type_name}
 				WHERE type_id = {int:id}',
@@ -248,7 +248,7 @@ class Types
 		else
 		{
 			$status = 'added';
-			$smcFunc['db_insert']('ignore',
+			$smcFunc['db_insert']('',
 				'{db_prefix}taskspp_project_types',
 				['type_name' => 'string'],
 				[$type_name,],
@@ -269,7 +269,7 @@ class Types
 	 * @param string $sort The sort order
 	 * @param string $query Any additional queries
 	 * @param array $values The values to be used in the query
-	 * @return void
+	 * @return array The types
 	 */
 	public static function getTypes($start, $limit, $sort, $query = null, $values = null)
 	{

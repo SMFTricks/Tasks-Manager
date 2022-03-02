@@ -265,7 +265,7 @@ class Book
 			fatal_lang_error('TasksManager_no_time_worked', false);
 
 		// Book the time
-		$smcFunc['db_insert']('ignore',
+		$smcFunc['db_insert']('',
 			'{db_prefix}taskspp_timesheet',
 			[
 				'task_id' => 'int',

@@ -313,11 +313,11 @@ class Projects
 				maxDate: "' . $modSettings['cal_maxyear'] . '-12-31",
 				yearRange: "' . $modSettings['cal_minyear'] . ':' . $modSettings['cal_maxyear'] . '",
 				hideIfNoPrevNext: true,
-				monthNames: ["' . implode('", "', $txt['months_titles']) . '"],
-				monthNamesShort: ["' . implode('", "', $txt['months_short']) . '"],
-				dayNames: ["' . implode('", "', $txt['days']) . '"],
-				dayNamesShort: ["' . implode('", "', $txt['days_short']) . '"],
-				dayNamesMin: ["' . implode('", "', $txt['days_short']) . '"],
+				monthNames: ["' . implode('", "', (array) $txt['months_titles']) . '"],
+				monthNamesShort: ["' . implode('", "', (array) $txt['months_short']) . '"],
+				dayNames: ["' . implode('", "', (array) $txt['days']) . '"],
+				dayNamesShort: ["' . implode('", "', (array) $txt['days_short']) . '"],
+				dayNamesMin: ["' . implode('", "', (array) $txt['days_short']) . '"],
 				prevText: "' . $txt['prev_month'] . '",
 				nextText: "' . $txt['next_month'] . '",
 			});
@@ -516,7 +516,7 @@ class Projects
 		if (!empty($_REQUEST['project_id']))
 		{
 			$smcFunc['db_query']('','
-				UPDATE IGNORE {db_prefix}taskspp_projects
+				UPDATE {db_prefix}taskspp_projects
 				SET
 					project_title = {string:project_title},
 					project_picture = {string:project_picture},
@@ -577,7 +577,7 @@ class Projects
 			}
 
 			$status = 'added';
-			$smcFunc['db_insert']('ignore',
+			$smcFunc['db_insert']('',
 				'{db_prefix}taskspp_projects',
 				$pp_columns,
 				$pp_values,
@@ -598,7 +598,7 @@ class Projects
 	 * @param string $sort The sort order
 	 * @param string $query Any additional queries
 	 * @param array $values The values to be used in the query
-	 * @return void
+	 * @return array The projects
 	 */
 	public static function getProjects($start, $limit, $sort, $query = null, $values = null)
 	{

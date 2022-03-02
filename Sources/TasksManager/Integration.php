@@ -140,6 +140,7 @@ class Integration
 	public function mod_buttons(&$mod_buttons)
 	{
 		global $scripturl, $context;
+		static $topic_task;
 
 		// Language
 		loadLanguage('TasksManager/');

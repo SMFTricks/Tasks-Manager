@@ -234,7 +234,7 @@ class Status
 		if (!empty($_REQUEST['status_id']))
 		{
 			$smcFunc['db_query']('','
-				UPDATE IGNORE {db_prefix}taskspp_project_status
+				UPDATE {db_prefix}taskspp_project_status
 				SET
 					status_name = {string:status_name}
 				WHERE status_id = {int:id}',
@@ -248,7 +248,7 @@ class Status
 		else
 		{
 			$status = 'added';
-			$smcFunc['db_insert']('ignore',
+			$smcFunc['db_insert']('',
 				'{db_prefix}taskspp_project_status',
 				['status_name' => 'string'],
 				[$status_name,],
@@ -269,7 +269,7 @@ class Status
 	 * @param string $sort The sort order
 	 * @param string $query Any additional queries
 	 * @param array $values The values to be used in the query
-	 * @return void
+	 * @return array The list of statuses
 	 */
 	public static function getStatus($start, $limit, $sort, $query = null, $values = null)
 	{
