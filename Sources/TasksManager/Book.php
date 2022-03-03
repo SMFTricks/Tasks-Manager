@@ -214,7 +214,7 @@ class Book
 			'task_id' => [
 				'label' => $txt['TasksManager_tasks'],
 				'type' => 'select',
-				'options' => $this->_tasks,
+				'options' => View::itemSelect($this->_tasks, 'task_id', 'task_name'),
 			],
 			'time_worked_hours' => [
 				'label' => $txt['TasksManager_booking_time_hours'],
