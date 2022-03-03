@@ -18,7 +18,7 @@ class Tasks
 	/**
 	 * @var array The subactions of the page
 	 */
-	private $_subactions = [];
+	private $_subactions;
 
 	/**
 	 * @var array The categories
@@ -40,8 +40,25 @@ class Tasks
 	 */
 	private $_statuses = [];
 
-	function __construct()
+	/**
+	 * Tasks::main()
+	 * 
+	 * Setup the tasks details and load the action
+	 * @return array
+	 */
+	public function main()
 	{
+		global $context, $txt, $modSettings;
+
+		// Page setup
+		View::page_setup('tasks', null, null, null, 'posts');
+
+		// Tabs
+		$context[$context['tasks_menu_name']]['tab_data']['tabs'] = [
+			'index' => ['description' => $txt['TasksManager_tasks_index_desc']],
+			'add' => ['description' => $txt['TasksManager_tasks_add_desc']],
+		];
+
 		// Subactions
 		$this->_subactions = [
 			'index' => 'list',
@@ -53,26 +70,15 @@ class Tasks
 			'savetopic' => 'savetopic',
 			'deletetopic' => 'deletetopic',
 		];
-	}
 
-	/**
-	 * Tasks::main()
-	 * 
-	 * Setup the tasks details and load the action
-	 * @return array
-	 */
-	public function main()
-	{
-		global $context, $txt;
+		// Projects
+		$this->_projects = Projects::getProjects(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 'p.project_title' : 'p.project_id DESC');
 
-		// Page setup
-		View::page_setup('tasks', null, null, null, 'posts');
+		// Categories
+		$this->_categories = Categories::getCategories(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 'category_name' : 'category_id DESC', null, null, 'tasks');
 
-		// Tabs
-		$context[$context['tasks_menu_name']]['tab_data']['tabs'] = [
-			'index' => ['description' => $txt['TasksManager_tasks_index_desc']],
-			'add' => ['description' => $txt['TasksManager_tasks_add_desc']],
-		];
+		// Statuses
+		$this->_statuses = Status::getStatus(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 's.status_name' : 's.status_id DESC');
 
 		// Get the current action
 		call_helper(__CLASS__ . '::' . $this->_subactions[isset($_GET['sa'], $this->_subactions[$_GET['sa']]) ? $_GET['sa'] : 'index'] . '#');
@@ -95,14 +101,18 @@ class Tasks
 		require_once($sourcedir . '/Subs-List.php');
 		$context['default_list'] = 'tasks_list';
 
-		// Projects
-		$context['tasks_projects_list'] = Projects::getProjects(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 'p.project_title' : 'p.project_id DESC');
-		// Status
-		$context['tasks_status_list'] = Status::getStatus(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 's.status_name' : 's.status_id DESC');
-		// Categories
-		$context['tasks_category_list'] = Categories::GettasksCategories(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 'c.category_name' : 'category_id DESC');
-		// List
-		$context['template_layers'][] = 'list_selector';
+		// Set the filter
+		if (!empty($this->_projects) || !empty($this->_statuses) || !empty($this->_categories))
+		{
+			// Projects
+			$context['tasks_projects_list'] = $this->_projects;
+			//Categories
+			$context['tasks_category_list'] = $this->_categories;
+			// Statuses
+			$context['tasks_status_list'] = $this->_statuses;
+			// Filter layer
+			$context['template_layers'][] = 'list_selector';
+		}
 
 		// Form URL
 		$context['form_url'] = $scripturl . '?action=tasksmanager;area=tasks;sa=index' . (isset($_REQUEST['project']) && $_REQUEST['project'] >= 0 ? ';project=' . $_REQUEST['project'] : '' ) . (isset($_REQUEST['status']) && $_REQUEST['status'] >= 0 ? ';status=' . $_REQUEST['status'] : '' ) . (isset($_REQUEST['category']) && $_REQUEST['category'] >= 0 ? ';category=' . $_REQUEST['category'] : '' );
@@ -293,14 +303,14 @@ class Tasks
 		// Editing?
 		if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'edit')
 		{
-			// Type id
+			// Task id
 			if (!isset($_REQUEST['id']) || empty($_REQUEST['id']))
 				fatal_lang_error('TasksManager_no_task', false);
 
-			// Get the type
+			// Get the task
 			$context['tasks_pp_task'] = Tasks::getTasks(0, 1, 'tk.task_id', 'WHERE tk.task_id = {int:id}', ['id' => (int) $_REQUEST['id']]);
 
-			// No type?
+			// No task?
 			if (empty($context['tasks_pp_task']))
 				fatal_lang_error('TasksManager_no_task', false);
 			else
@@ -349,14 +359,6 @@ class Tasks
 			});
 		', true);
 
-		// Categories
-		$this->categories();
-
-		// Statuses
-		$this->statuses();
-
-		// Projects
-		$this->projects();
 
 		// Settings
 		$context['tasks_pp_settings'] = [
@@ -374,19 +376,19 @@ class Tasks
 				'label' => $txt['TasksManager_tasks_project'],
 				'value' => !empty($context['tasks_pp_task']['project_id']) ? $context['tasks_pp_task']['project_id'] : '',
 				'type' => 'select',
-				'options' => $this->_projects,
+				'options' => View::itemSelect($this->_projects, 'project_id', 'project_title', $txt['TasksManager_tasks_no_project']),
 			],
 			'task_cat_id' => [
 				'label' => $txt['TasksManager_tasks_category'],
 				'value' => !empty($context['tasks_pp_task']['task_cat_id']) ? $context['tasks_pp_task']['task_cat_id'] : 0,
 				'type' => 'select',
-				'options' => $this->_categories,
+				'options' => View::itemSelect($this->_categories, 'category_id', 'category_name', $txt['TasksManager_projects_no_category']),
 			],
 			'task_status_id' => [
 				'label' => $txt['TasksManager_tasks_status'],
 				'value' => !empty($context['tasks_pp_task']['task_status_id']) ? $context['tasks_pp_task']['task_status_id'] : 0,
 				'type' => 'select',
-				'options' => $this->_statuses,
+				'options' => View::itemSelect($this->_statuses, 'status_id', 'status_name', $txt['TasksManager_projects_no_status']),
 			],
 			'estimated_hrs' => [
 				'label' => $txt['TasksManager_tasks_estimated_hours'],
@@ -425,89 +427,12 @@ class Tasks
 	}
 
 	/**
-	 * Tasks::categories()
-	 * 
-	 * Load a list of categories for a select
-	 * @return void
-	 */
-	private function categories()
-	{
-		global $txt;
-
-		$this->_categories = [
-			$txt['TasksManager_projects_no_category'] => 0,
-		];
-		$pp_categories = Categories::GettasksCategories(0, 1000000, 'c.task_cat_id');
-		// Add the categories we got
-		if (!empty($pp_categories))
-			foreach ($pp_categories as $category)
-				$this->_categories[$category['category_name']] = $category['category_id'];
-	}
-
-	/**
-	 * Tasks::statuses()
-	 * 
-	 * Load a list of statuses for a select
-	 * @return void
-	 */
-	private function statuses()
-	{
-		global $txt;
-
-		$this->_statuses = [
-			$txt['TasksManager_projects_no_status'] => 0,
-		];
-		$pp_statuses = Status::getStatus(0, 1000000, 's.status_id');
-		// Add the statuses we got
-		if (!empty($pp_statuses))
-			foreach ($pp_statuses as $status)
-				$this->_statuses[$status['status_name']] = $status['status_id'];
-	}
-
-	/**
-	 * Tasks::projects()
-	 * 
-	 * Load a list of projects for a select
-	 * @return void
-	 */
-	private function projects()
-	{
-		global $txt;
-
-		$this->_projects = [
-			$txt['TasksManager_tasks_no_project'] => 0,
-		];
-		$pp_projects = Projects::getProjects(0, 1000000, 'p.project_id');
-		// Add the projects we got
-		if (!empty($pp_projects))
-			foreach ($pp_projects as $project)
-				$this->_projects[$project['project_title']] = $project['project_id'];
-	}
-
-	/**
-	 * Tasks::taskList()
-	 * 
-	 * Load a list of tasks for a select
-	 * @return void
-	 */
-	private function tasksList()
-	{
-		$pp_tasks = $this->getTasks(0, 1000000, 'tk.task_name', 'WHERE tk.topic_id = {int:no_topic}', ['no_topic' => 0]);
-		// Add the tasks found
-		if (!empty($pp_tasks))
-		{
-			foreach ($pp_tasks as $task)
-				$this->_tasks[$task['task_name']] = $task['task_id'];
-		}
-	}
-
-	/**
 	 * Tasks::save()
 	 * 
 	 * Save a new or edited task
 	 * @return void
 	 */
-	public static function save()
+	public function save()
 	{
 		global $smcFunc;
 
@@ -773,11 +698,15 @@ class Tasks
 		$context['template_layers'][]= 'add_topic';
 
 		// Get the tasks that don't have a topic
-		$this->tasksList();
+		$this->_tasks = self::getTasks(0, 1000000, 'tk.task_name',  'WHERE tk.topic_id = {int:no_topic}', ['no_topic' => 0]);
 
 		// Check if there are any tasks available
 		if (empty($this->_tasks))
 			fatal_lang_error('TasksManager_no_tasks_available', false);
+
+		// Sort the tasks for the select
+		$this->_tasks = View::itemSelect($this->_tasks, 'task_id', 'task_name', '');
+		unset($this->_tasks[0]);
 
 		// Settings
 		$context['tasks_pp_settings'] = [
