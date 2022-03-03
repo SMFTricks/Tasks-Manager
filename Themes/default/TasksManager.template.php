@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @package Tasks Manager
+ * @version 1.1
+ * @author Diego Andrés <diegoandres_cortes@outlook.com>
+ * @copyright Copyright (c) 2022, SMF Tricks
+ * @license MIT
+ */
+
 function template_main_above() {}
 
 /**
