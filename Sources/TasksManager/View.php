@@ -33,7 +33,7 @@ class View
 	function __construct()
 	{
 		// Language
-		loadLanguage('TasksManager/');
+		Integration::language();
 
 		// Template
 		loadTemplate('TasksManager');
@@ -264,15 +264,15 @@ class View
 	 * @param array $list The list of items
 	 * @param string $key The key to sort by
 	 * @param string $value The value to sort by
-	 * @param string $none_txt The text to use for none
+	 * @param string|null $none_txt The text to use for none
 	 * @return array The sorted list of items
 	 */
-	public static function itemSelect($list, $key, $value, $none_txt)
+	public static function itemSelect($list, $key, $value, $none_txt = null)
 	{
-		// print_r($list);
-		$sort = [
-			0 => $none_txt
-		];
+		if (isset($none_txt))
+			$sort = [
+				0 => $none_txt
+			];
 		foreach ($list as $item)
 			$sort[$item[$key]] = $item[$value];
 
