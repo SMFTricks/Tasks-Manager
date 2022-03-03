@@ -1,5 +1,14 @@
 # Changelog
 
+#### 1.1 - 03 March 2022
+- ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) Added 'Who" action integration.
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Merged delete and modify columns.
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) It now uses the topics table to assign tasks.
+- ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) Added total tasks counter to projects.
+- ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) Added total time booked from tasks to projects.
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixes issues with some queries.
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Code cleanup.
+---
 #### 1.0.2 - 22 February 2022
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Increased width of tasks and projects name/title.
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed occasional missing language string.
