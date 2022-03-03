@@ -664,7 +664,7 @@ class Tasks
 		View::page_setup('tasks', 'manage', 'add_topic_task',  '?action=tasksmanager;area=tasks;sa=' . $_REQUEST['sa'] . (!empty($_REQUEST['id']) ? ';id=' . $_REQUEST['id'] : '') . ';' . $context['session_var'] . '=' . $context['session_id'], 'approve');
 
 		// Add some topic context
-		if (($context['task_topic_id'] = cache_get_data('tasks_addtopic_' . $_REQUEST['id'], 3600)) === null)
+		if (($context['task_topic_information'] = cache_get_data('tasks_addtopic_' . $_REQUEST['id'], 3600)) === null)
 		{
 			$request = $smcFunc['db_query']('', '
 				SELECT
@@ -676,16 +676,14 @@ class Tasks
 					'id' => (int) $_REQUEST['id'],
 				]
 			);
-			list ($context['task_topic_id'], $context['task_topic_subject']) = $smcFunc['db_fetch_row']($request);
+			while ($row = $smcFunc['db_fetch_assoc']($request))
+				$context['task_topic_information'] = $row;
 			$smcFunc['db_free_result']($request);
-
-			cache_put_data('tasks_addtopic_' . $_REQUEST['id'], $context['task_topic_id'], 3600);
+			cache_put_data('tasks_addtopic_' . $_REQUEST['id'], $context['task_topic_information'], 3600);
 		}
-			
-		$context['TasksManager_adding_topic'] = $txt['TasksManager_adding_topic_task'];
 
 		// Check again for the topic
-		if (empty($context['task_topic_id']))
+		if (empty($context['task_topic_information']))
 			fatal_lang_error('TasksManager_no_topic', false);
 
 		// Setup a layer so the user understand the context of this page a little bit better

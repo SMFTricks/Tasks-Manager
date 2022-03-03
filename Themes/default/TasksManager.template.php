@@ -118,13 +118,13 @@ function template_manage()
  */
 function template_add_topic_above()
 {
-	global $context, $scripturl;
+	global $context, $scripturl, $txt;
 
 	echo '
 		<div class="noticebox">
-			', $context['TasksManager_adding_topic'], '
-			<a href="', $scripturl, '?topic=', $_REQUEST['id'] . '.0">
-				', $context['task_topic_subject'], '
+			', $txt['TasksManager_adding_topic_task'], '
+			<a href="', $scripturl, '?topic=', $context['task_topic_information']['id_topic'] . '.0">
+				', $context['task_topic_information']['subject'], '
 			</a>
 		</div>';
 }
