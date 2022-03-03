@@ -184,9 +184,9 @@ class Categories
 
 			// Set the active tab
 			$context[$context['tasks_menu_name']]['current_subsection'] = $_REQUEST['sa'] == 'editp' ? 'projects' : 'tasks';
-			
-			// Get the category
-			$context['tasks_pp_category'] = ($_REQUEST['sa'] == 'editp' ? $this->GetprojectCategories(0, 1, 'c.category_id', 'WHERE c.category_id = {int:cat}', ['cat' => (int) $_REQUEST['id']]) : $this->GettasksCategories(0, 1, 'c.task_cat_id', 'WHERE c.task_cat_id = {int:cat}', ['cat' => (int) $_REQUEST['id']]));
+
+			// Get the categoy
+			$context['tasks_pp_category'] = $this->getCategories(0, 1, 'category_id', 'WHERE c.' . ($_REQUEST['sa'] == 'editp' ? 'category' : 'task_cat') . '_id = {int:cat}', ['cat' => (int) $_REQUEST['id']], ($_REQUEST['sa'] == 'editp' ? 'projects' : 'tasks'));
 
 			// No category?
 			if (empty($context['tasks_pp_category']))
