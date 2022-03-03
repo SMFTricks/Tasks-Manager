@@ -179,6 +179,7 @@ class Tasks
 							// Actual hours
 							$hours = $row['hours_worked'] + floor($row['minutes_worked'] / 60);
 
+							// Time Booked for this task
 							$details .= '<br /><strong>'. $txt['TasksManager_tasks_time_booked'] . ':</strong> ' . (!empty($hours) || !empty($minutes) ? sprintf('%02d', $hours). ':' . sprintf('%02d', $minutes) : $txt['TasksManager_no_total_time']);
 
 							// Start Date
@@ -234,7 +235,9 @@ class Tasks
 					],
 					'data' => [
 						'sprintf' => [
-							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=tasks;sa=edit;id=%1$s">' . $txt['modify'] . '</a>',
+							'format' => '
+								<a href="' . $scripturl . '?action=tasksmanager;area=tasks;sa=edit;id=%1$s">' . $txt['modify'] . '</a><br>
+								<a href="' . $scripturl . '?action=tasksmanager;area=tasks;sa=delete;id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['quickmod_confirm'] . '\');">' . $txt['delete'] . '</a>',
 							'params' => [
 								'task_id' => false,
 							],
@@ -244,22 +247,6 @@ class Tasks
 					'sort' => [
 						'default' => 'task_id',
 						'reverse' => 'task_id DESC',
-					],
-				],
-				'delete' => [
-					'header' => [
-						'value' => $txt['delete'],
-						'class' => 'centertext',
-						'style' => 'width: 7%;',
-					],
-					'data' => [
-						'sprintf' => [
-							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=tasks;sa=delete;id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['quickmod_confirm'] . '\');">' . $txt['delete'] . '</a>',
-							'params' => [
-								'task_id' => false,
-							],
-						],
-						'class' => 'centertext',
 					],
 				],
 			],
