@@ -35,11 +35,17 @@ class Integration
 		add_integration_function('integrate_autoload', __CLASS__ . '::autoload', false);
 		add_integration_function('integrate_actions', __CLASS__ . '::actions', false);
 		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menu_buttons#', false);
+		// Language
 		add_integration_function('integrate_admin_areas', __CLASS__ . '::language', false);
 		add_integration_function('integrate_helpadmin', __CLASS__ . '::language', false);
+		// Permission
 		add_integration_function('integrate_load_permissions', __CLASS__ . '::load_permissions#', false);
 		add_integration_function('integrate_load_illegal_guest_permissions', __CLASS__ . '::illegal_guest#', false);
-		add_integration_function('integrate_mod_buttons', __CLASS__ . '::mod_buttons', false);
+		// Mod Button
+		add_integration_function('integrate_mod_buttons', __CLASS__ . '::mod_buttons#', false);
+		// Topic
+		add_integration_function('integrate_display_topic', __CLASS__ . '::display_topic', false);
+		// Who
 		add_integration_function('whos_online_after', __CLASS__ . '::whos_online_after#', false);
 	}
 
@@ -146,18 +152,32 @@ class Integration
 		// Don't do anything if we don't have the permission
 		if (!allowedTo('tasksmanager_can_edit'))
 			return;	
-			
+
 		// Language
 		$this->language();
 
-		// Get tasks with this topic
-		$topic_task = Tasks::getTasks(0, 100000, 'tk.task_id', 'WHERE tk.topic_id = {int:topic}', ['topic' => $context['current_topic']]);
-
 		// Add a topic to a task
-		if (empty($topic_task))
+		if (empty($context['topicinfo']['tasks_task_id']))
 			$mod_buttons['tasksmanager_add_task'] = ['text' => 'TasksManager_add_topic_task', 'icon' => 'posts', 'url' => $scripturl . '?action=tasksmanager;area=tasks;sa=addtopic;id=' . $context['current_topic'] . ';' . $context['session_var'] . '=' . $context['session_id']];
 		else
 			$mod_buttons['tasksmanager_remove_task'] = ['text' => 'TasksManager_remove_topic_task', 'icon' => 'delete', 'url' => $scripturl . '?action=tasksmanager;area=tasks;sa=deletetopic;id=' . $context['current_topic'] . ';' . $context['session_var'] . '=' . $context['session_id']];
+	}
+
+	/**
+	 * Integration::display_topic()
+	 * 
+	 * Add the tasks to the topic info
+	 * 
+	 * @param array $topic_selects The topic additional selects
+	 * @param array $topic_tables The topic additional tables
+	 */
+	public static function display_topic(&$topic_selects, &$topic_tables)
+	{
+		// Column
+		$topic_selects[] = 't.tasks_task_id';
+
+		// Table
+		$topic_tables[] = 'LEFT JOIN {db_prefix}taskspp_tasks AS tk ON (tk.task_id = t.tasks_task_id)';
 	}
 
 	/**

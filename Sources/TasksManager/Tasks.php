@@ -144,8 +144,8 @@ class Tasks
 						{
 							$title = '<h6>' . $row['task_name'] . '</h6>';
 
-							if (!empty($row['topic_id']))
-								$title = '<h6><a href="' . $scripturl . '?topic=' . $row['topic_id'] . '.0" title="' . $row['task_name'] . '">' . $row['task_name'] . '</a></h6>';
+							if (isset($row['id_topic']) && !empty($row['id_topic']))
+								$title = '<h6><a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0" title="' . $row['task_name'] . '">' . $row['task_name'] . '</a></h6>';
 
 							$title .= (!empty($row['task_desc']) ? '<span class="smalltext">' . parse_bbc($row['task_desc']) . '</span>' : '');
 
@@ -543,16 +543,17 @@ class Tasks
 
 		$request = $smcFunc['db_query']('', '
 			SELECT
-				tk.task_id, tk.topic_id, tk.task_name, tk.task_cat_id, tk.project_id,
+				tk.task_id, tk.task_name, tk.task_cat_id, tk.project_id,
 				tk.start_date, tk.end_date, tk.task_desc, tk.task_status_id, tk.estimated_hrs,
-				c.category_name, s.status_name, p.project_title, SUM(ts.hours_worked) AS hours_worked, SUM(ts.minutes_worked) AS minutes_worked
+				c.category_name, s.status_name, p.project_title, SUM(ts.hours_worked) AS hours_worked, SUM(ts.minutes_worked) AS minutes_worked, t.id_topic
 			FROM {db_prefix}taskspp_tasks AS tk
+				LEFT JOIN {db_prefix}topics AS t ON (t.tasks_task_id = tk.task_id)
 				LEFT JOIN {db_prefix}taskspp_timesheet AS ts ON (ts.task_id = tk.task_id)
 				LEFT JOIN {db_prefix}taskspp_projects AS p ON (p.project_id = tk.project_id)
 				LEFT JOIN {db_prefix}taskspp_task_categories AS c ON (c.task_cat_id = tk.task_cat_id)
 				LEFT JOIN {db_prefix}taskspp_project_status AS s ON (s.status_id = tk.task_status_id) ' . (!empty($query) ? 
 				$query : '') . '
-			GROUP BY tk.task_id, tk.topic_id, c.category_name, s.status_name, p.project_title
+			GROUP BY tk.task_id, c.category_name, s.status_name, p.project_title, t.id_topic
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:limit}',
 			$data
@@ -685,7 +686,7 @@ class Tasks
 		$context['template_layers'][]= 'add_topic';
 
 		// Get the tasks that don't have a topic
-		$this->_tasks = self::getTasks(0, 1000000, 'tk.task_name',  'WHERE tk.topic_id = {int:no_topic}', ['no_topic' => 0]);
+		$this->_tasks = self::getTasks(0, 1000000, 'tk.task_name', 'WHERE t.id_topic IS NULL');
 
 		// Check if there are any tasks available
 		if (empty($this->_tasks))
@@ -702,7 +703,7 @@ class Tasks
 				'type' => 'select',
 				'options' => $this->_tasks,
 			],
-			'topic_id' => [
+			'id_topic' => [
 				'value' => (int) $_REQUEST['id'],
 				'type' => 'hidden',
 			],
@@ -732,37 +733,25 @@ class Tasks
 		isAllowedTo('tasksmanager_can_edit');
 
 		// Task and topic?
-		if (empty($_REQUEST['task_id']) || empty($_REQUEST['topic_id']))
+		if (empty($_REQUEST['task_id']) || empty($_REQUEST['id_topic']))
 			fatal_lang_error('TasksManager_no_topic', false);
 
 		checkSession();
 
-		// User might add a different topic to a task so let's drop it from any other task
-		$smcFunc['db_query']('', '
-			UPDATE {db_prefix}taskspp_tasks
-			SET
-				topic_id = {int:no_topic}
-			WHERE topic_id = {int:topic_id}',
-			[
-				'no_topic' => 0,
-				'topic_id' => (int) $_REQUEST['topic_id'],
-			]
-		);
-
-		// Add the topic to the task
+		// Add the task to the topic
 		$smcFunc['db_query']('','
-			UPDATE {db_prefix}taskspp_tasks
+			UPDATE {db_prefix}topics
 			SET
-				topic_id = {int:topic_id}
-			WHERE task_id = {int:id}',
+				tasks_task_id = {int:task_id}
+			WHERE id_topic = {int:topic}',
 			[
-				'id' => (int) $_REQUEST['task_id'],
-				'topic_id' => (int) $_REQUEST['topic_id'],
+				'task_id' => (int) $_REQUEST['task_id'],
+				'topic' => (int) $_REQUEST['id_topic'],
 			]
 		);
 
 		// Redirect
-		redirectexit('topic=' . $_REQUEST['topic_id'] . '.0');
+		redirectexit('topic=' . $_REQUEST['id_topic'] . '.0');
 	}
 
 	/**
@@ -785,15 +774,15 @@ class Tasks
 		// Sesh
 		checkSession('get');
 
-		// Drop this topic from the task (or tasks lol)
+		// Drop this task from the topic
 		$smcFunc['db_query']('','
-			UPDATE {db_prefix}taskspp_tasks
+			UPDATE {db_prefix}topics
 			SET
-				topic_id = {int:id}
-			WHERE topic_id = {int:topic_id}',
+				tasks_task_id = {int:id}
+			WHERE id_topic = {int:id_topic}',
 			[
 				'id' => 0,
-				'topic_id' => (int) $_REQUEST['id'],
+				'id_topic' => (int) $_REQUEST['id'],
 			]
 		);
 
