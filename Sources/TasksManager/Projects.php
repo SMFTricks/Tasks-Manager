@@ -196,10 +196,19 @@ class Projects
 						'function' => function($row) use ($txt, $scripturl)
 						{
 							// Status
-							$status = (!empty($row['status_id']) ? $row['status_name'] : $txt['TasksManager_projects_no_status']);
+							$status = '<strong>' . $txt['TasksManager_status'] . ':</strong> ' . (!empty($row['status_id']) ? $row['status_name'] : $txt['TasksManager_projects_no_status']);
 
 							// Tasks Link
-							$status .= '<br /><a href="' . $scripturl . '?action=tasksmanager;area=tasks;sa=index;project=' . $row['project_id'] . '">' . $txt['TasksManager_projects_view_tasks'] . '</a>';
+							$status .= '<br /><strong>' . $txt['TasksManager_tasks'] . ':</strong> <a href="' . $scripturl . '?action=tasksmanager;area=tasks;sa=index;project=' . $row['project_id'] . '" title="' . $txt['TasksManager_tasks_total'] . '">' . $row['total_tasks'] . '</a>';
+
+							// Minutes
+							$minutes = (!empty($row['minutes_worked']) ? ($row['minutes_worked'] % 60) : 0);
+
+							// Actual hours
+							$hours = $row['hours_worked'] + floor($row['minutes_worked'] / 60);
+
+							// Time Booked for this project
+							$status .= '<br /><strong>'. $txt['TasksManager_tasks_time_booked'] . ':</strong> ' . (!empty($hours) || !empty($minutes) ? sprintf('%02d', $hours). ':' . sprintf('%02d', $minutes) : $txt['TasksManager_no_total_time']);
 
 							return  $status;
 						},
@@ -218,7 +227,10 @@ class Projects
 					],
 					'data' => [
 						'sprintf' => [
-							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=projects;sa=edit;id=%1$s">' . $txt['modify'] . '</a>',
+							'format' => '
+								<a href="' . $scripturl . '?action=tasksmanager;area=projects;sa=edit;id=%1$s">' . $txt['modify'] . '</a><br>
+								<a href="' . $scripturl . '?action=tasksmanager;area=projects;sa=delete;id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['quickmod_confirm'] . '\');">' . $txt['delete'] . '</a>
+								',
 							'params' => [
 								'project_id' => false,
 							],
@@ -230,22 +242,7 @@ class Projects
 						'reverse' => 'project_id DESC',
 					],
 				],
-				'delete' => [
-					'header' => [
-						'value' => $txt['delete'],
-						'class' => 'centertext',
-						'style' => 'width: 7%;',
-					],
-					'data' => [
-						'sprintf' => [
-							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=projects;sa=delete;id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['quickmod_confirm'] . '\');">' . $txt['delete'] . '</a>',
-							'params' => [
-								'project_id' => false,
-							],
-						],
-						'class' => 'centertext',
-					],
-				],
+			
 			],
 		];
 		// Info?
@@ -559,12 +556,17 @@ class Projects
 			SELECT
 				p.project_id, p.project_title, p.project_picture, p.view_type,
 				p.category_id, p.start_date, p.end_date, p.description, p.additional_details,
-				p.type_id, p.status_id, c.category_name, t.type_name, s.status_name
+				p.type_id, p.status_id, c.category_name, t.type_name, s.status_name,
+				COUNT(DISTINCT  tk.task_id) AS total_tasks,
+				SUM(ts.hours_worked) AS hours_worked, SUM(ts.minutes_worked) AS minutes_worked
 			FROM {db_prefix}taskspp_projects AS p
+				LEFT JOIN {db_prefix}taskspp_tasks AS tk ON (tk.project_id = p.project_id)
+				LEFT JOIN {db_prefix}taskspp_timesheet AS ts ON (ts.task_id = tk.task_id)
 				LEFT JOIN {db_prefix}taskspp_project_categories AS c ON (c.category_id = p.category_id)
 				LEFT JOIN {db_prefix}taskspp_project_types AS t ON (t.type_id = p.type_id)
 				LEFT JOIN {db_prefix}taskspp_project_status AS s ON (s.status_id = p.status_id) ' . (!empty($query) ? 
 				$query : '') . '
+			GROUP BY p.project_id, c.category_name, t.type_name, s.status_name
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:limit}',
 			$data
