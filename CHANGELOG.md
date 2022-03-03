@@ -1,6 +1,7 @@
 # Changelog
 
 #### 1.1 - 03 March 2022
+- ![Translation](https://smftricks.com/assets/changelog/language.png) Russian translation provided by [Bugo](https://www.simplemachines.org/community/index.php?action=profile;u=229017)
 - ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) Added 'Who" action integration.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Merged delete and modify columns.
 - ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) It now uses the topics table to assign tasks.
