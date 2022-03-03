@@ -257,6 +257,29 @@ class View
 	}
 
 	/**
+	 * View::itemSelect()
+	 * 
+	 * Sorts a list of items for the select
+	 * 
+	 * @param array $list The list of items
+	 * @param string $key The key to sort by
+	 * @param string $value The value to sort by
+	 * @param string $none_txt The text to use for none
+	 * @return array The sorted list of items
+	 */
+	public static function itemSelect($list, $key, $value, $none_txt)
+	{
+		// print_r($list);
+		$sort = [
+			0 => $none_txt
+		];
+		foreach ($list as $item)
+			$sort[$item[$key]] = $item[$value];
+
+		return $sort;
+	}
+
+	/**
 	 * View::copyright()
 	 *
 	 * @return string A link for copyright notice
