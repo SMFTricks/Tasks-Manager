@@ -18,22 +18,7 @@ class Types
 	/**
 	 * @var array The subactions of the page
 	 */
-	private $_subactions = [];
-
-	function __construct()
-	{
-		// Can you manage tasks?
-		isAllowedTo('tasksmanager_can_edit');
-
-		// Subactions
-		$this->_subactions = [
-			'index' => 'list',
-			'add' => 'manage',
-			'edit' => 'manage',
-			'save' => 'save',
-			'delete' => 'delete',
-		];
-	}
+	private $_subactions;
 
 	/**
 	 * Types::main()
@@ -45,6 +30,9 @@ class Types
 	{
 		global $context, $txt;
 
+		// Can you manage tasks?
+		isAllowedTo('tasksmanager_can_edit');
+
 		// Page setup
 		View::page_setup('types', null, null, null, 'logs');
 
@@ -52,6 +40,15 @@ class Types
 		$context[$context['tasks_menu_name']]['tab_data']['tabs'] = [
 			'index' => ['description' => $txt['TasksManager_types_index_desc']],
 			'add' => ['description' => $txt['TasksManager_add_type_desc']],
+		];
+
+		// Subactions
+		$this->_subactions = [
+			'index' => 'list',
+			'add' => 'manage',
+			'edit' => 'manage',
+			'save' => 'save',
+			'delete' => 'delete',
 		];
 
 		// Get the current action
