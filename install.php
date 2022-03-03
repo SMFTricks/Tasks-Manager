@@ -121,14 +121,6 @@
 					'unsigned' => true,
 				],
 				[
-					'name' => 'topic_id',
-					'type' => 'mediumint',
-					'size' => 8,
-					'unsigned' => true,
-					'not_null' => true,
-					'default' => 0,
-				],
-				[
 					'name' => 'project_id',
 					'type' => 'mediumint',
 					'size' => 8,
