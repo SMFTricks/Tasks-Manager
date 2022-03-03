@@ -2,7 +2,7 @@
 
 /**
  * @package Tasks Manager
- * @version 1.0
+ * @version 1.1
  * @author Diego Andrés <diegoandres_cortes@outlook.com>
  * @copyright Copyright (c) 2022, SMF Tricks
  * @license MIT
@@ -18,22 +18,7 @@ class Status
 	/**
 	 * @var array The subactions of the page
 	 */
-	private $_subactions = [];
-
-	function __construct()
-	{
-		// Can you manage tasks?
-		isAllowedTo('tasksmanager_can_edit');
-
-		// Subactions
-		$this->_subactions = [
-			'index' => 'list',
-			'add' => 'manage',
-			'edit' => 'manage',
-			'save' => 'save',
-			'delete' => 'delete',
-		];
-	}
+	private $_subactions;
 
 	/**
 	 * Status::main()
@@ -45,6 +30,9 @@ class Status
 	{
 		global $context, $txt;
 
+		// Can you manage tasks?
+		isAllowedTo('tasksmanager_can_edit');
+
 		// Page setup
 		View::page_setup('status', null, 'statuses', null, 'warning');
 
@@ -52,6 +40,15 @@ class Status
 		$context[$context['tasks_menu_name']]['tab_data']['tabs'] = [
 			'index' => ['description' => $txt['TasksManager_status_list_desc']],
 			'add' => ['description' => $txt['TasksManager_status_add_desc']],
+		];
+
+		// Subactions
+		$this->_subactions = [
+			'index' => 'list',
+			'add' => 'manage',
+			'edit' => 'manage',
+			'save' => 'save',
+			'delete' => 'delete',
 		];
 
 		// Get the current action
@@ -234,7 +231,7 @@ class Status
 		if (!empty($_REQUEST['status_id']))
 		{
 			$smcFunc['db_query']('','
-				UPDATE IGNORE {db_prefix}taskspp_project_status
+				UPDATE {db_prefix}taskspp_project_status
 				SET
 					status_name = {string:status_name}
 				WHERE status_id = {int:id}',
@@ -248,7 +245,7 @@ class Status
 		else
 		{
 			$status = 'added';
-			$smcFunc['db_insert']('ignore',
+			$smcFunc['db_insert']('',
 				'{db_prefix}taskspp_project_status',
 				['status_name' => 'string'],
 				[$status_name,],
@@ -269,7 +266,7 @@ class Status
 	 * @param string $sort The sort order
 	 * @param string $query Any additional queries
 	 * @param array $values The values to be used in the query
-	 * @return void
+	 * @return array The list of statuses
 	 */
 	public static function getStatus($start, $limit, $sort, $query = null, $values = null)
 	{

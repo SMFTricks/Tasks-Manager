@@ -2,7 +2,7 @@
 
 /**
  * @package Tasks Manager
- * @version 1.0
+ * @version 1.1
  * @author Diego Andrés <diegoandres_cortes@outlook.com>
  * @copyright Copyright (c) 2022, SMF Tricks
  * @license MIT
@@ -34,12 +34,19 @@ class Integration
 		// Hooks
 		add_integration_function('integrate_autoload', __CLASS__ . '::autoload', false);
 		add_integration_function('integrate_actions', __CLASS__ . '::actions', false);
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menu_buttons', false);
+		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menu_buttons#', false);
+		// Language
 		add_integration_function('integrate_admin_areas', __CLASS__ . '::language', false);
 		add_integration_function('integrate_helpadmin', __CLASS__ . '::language', false);
+		// Permission
 		add_integration_function('integrate_load_permissions', __CLASS__ . '::load_permissions#', false);
 		add_integration_function('integrate_load_illegal_guest_permissions', __CLASS__ . '::illegal_guest#', false);
+		// Mod Button
 		add_integration_function('integrate_mod_buttons', __CLASS__ . '::mod_buttons#', false);
+		// Topic
+		add_integration_function('integrate_display_topic', __CLASS__ . '::display_topic', false);
+		// Who
+		add_integration_function('whos_online_after', __CLASS__ . '::whos_online_after#', false);
 	}
 
 	/**
@@ -61,12 +68,12 @@ class Integration
 	 * @param array $buttons The forum menu buttons
 	 * @return void
 	 */
-	public static function menu_buttons(&$buttons)
+	public function menu_buttons(&$buttons)
 	{
 		global $scripturl, $txt, $modSettings;
 
 		// Language
-		loadLanguage('TasksManager/');
+		$this->language();
 
 		// Menu Button
 		$buttons['tasksmanager' ] = [
@@ -140,27 +147,171 @@ class Integration
 	public function mod_buttons(&$mod_buttons)
 	{
 		global $scripturl, $context;
-
-		// Language
-		loadLanguage('TasksManager/');
+		static $topic_task;
 
 		// Don't do anything if we don't have the permission
 		if (!allowedTo('tasksmanager_can_edit'))
-			return;
+			return;	
 
-		// Find if this topic is in any task
-		if (($topic_task = cache_get_data('tasksmanager_topic_tasks_' . $context['current_topic'], 3600)) === null)
-		{
-			// Get tasks with this topic
-			$topic_task = Tasks::getTasks(0, 100000, 'tk.task_id', 'WHERE tk.topic_id = {int:topic}', ['topic' => $context['current_topic']]);
-
-			cache_put_data('tasksmanager_topic_tasks_' . $context['current_topic'], $topic_task, 3600);
-		}
+		// Language
+		$this->language();
 
 		// Add a topic to a task
-		if (empty($topic_task))
+		if (empty($context['topicinfo']['tasks_task_id']))
 			$mod_buttons['tasksmanager_add_task'] = ['text' => 'TasksManager_add_topic_task', 'icon' => 'posts', 'url' => $scripturl . '?action=tasksmanager;area=tasks;sa=addtopic;id=' . $context['current_topic'] . ';' . $context['session_var'] . '=' . $context['session_id']];
 		else
 			$mod_buttons['tasksmanager_remove_task'] = ['text' => 'TasksManager_remove_topic_task', 'icon' => 'delete', 'url' => $scripturl . '?action=tasksmanager;area=tasks;sa=deletetopic;id=' . $context['current_topic'] . ';' . $context['session_var'] . '=' . $context['session_id']];
+	}
+
+	/**
+	 * Integration::display_topic()
+	 * 
+	 * Add the tasks to the topic info
+	 * 
+	 * @param array $topic_selects The topic additional selects
+	 * @param array $topic_tables The topic additional tables
+	 */
+	public static function display_topic(&$topic_selects, &$topic_tables)
+	{
+		// Column
+		$topic_selects[] = 't.tasks_task_id';
+
+		// Table
+		$topic_tables[] = 'LEFT JOIN {db_prefix}taskspp_tasks AS tk ON (tk.task_id = t.tasks_task_id)';
+	}
+
+	/**
+	 * Integration::whos_online_after()
+	 * 
+	 * Add the tasks to the who allowed list
+	 * 
+	 * @param mixed $urls a single url (string) or an array of arrays, each inner array being (JSON-encoded request data, id_member)
+	 * @param array $data Returns the correct strings for each action
+	 * @return void
+	 */
+	public function whos_online_after(&$urls, &$data)
+	{
+		global $smcFunc, $txt, $scripturl, $modSettings;
+
+		// Load language
+		$this->language();
+
+		// Go through the urls
+		foreach ($urls as $key => $url)
+		{
+			// Get the actual actions
+			$actions = $smcFunc['json_decode']($url[0], true);
+
+			// Any actions?
+			if (empty($actions))
+				continue;
+
+			// We only want tasksmanager actions here
+			if (!isset($actions['action']) || $actions['action'] !== 'tasksmanager')
+				continue;
+
+			// Can they see the tasks manager?
+			if (!allowedTo('tasksmanager_can_view'))
+			{
+				$data[$key] = $txt['who_hidden'];
+				continue;
+			}
+
+			// Use some defaults
+			$default_url = $scripturl . '?action=' . $actions['action'];
+			$default_txt = $txt['TasksManager_who_viewing_tasksmanager'];
+			$allowed_area = true;
+
+			// Set a default text
+			$data[$key] = sprintf($default_txt, $default_url, (!empty($modSettings['tppm_title']) ? $modSettings['tppm_title'] : $txt['TasksManager_button']));
+
+			// Viewing the index or... something? Do nothing!
+			if (!isset($actions['area']))
+				continue;
+
+			// Give it the area
+			$default_url .= ';area=' . $actions['area'];
+
+			// Now we go for the areas
+			switch ($actions['area'])
+			{
+				// Projects
+				case 'projects':
+					$default_txt = $txt['TasksManager_who_viewing_projects'];
+					break;
+				// Tasks
+				case 'tasks':
+					$default_txt = $txt['TasksManager_who_viewing_tasks'];
+					break;
+				// Booking
+				case 'booking':
+					$allowed_area = allowedTo('tasksmanager_can_edit');
+					$default_txt = $txt['TasksManager_who_viewing_bookings'];
+					break;
+				// Categories
+				case 'categories':
+					$allowed_area = allowedTo('tasksmanager_can_edit');
+					$default_txt = $txt['TasksManager_who_viewing_categories'];
+					break;
+				// Status
+				case 'status':
+					$allowed_area = allowedTo('tasksmanager_can_edit');
+					$default_txt = $txt['TasksManager_who_viewing_status'];
+					break;
+				// Types
+				case 'types':
+					$allowed_area = allowedTo('tasksmanager_can_edit');
+					$default_txt = $txt['TasksManager_who_viewing_types'];
+					break;
+				// Config
+				case 'config':
+					$allowed_area = allowedTo('tasksmanager_can_edit');
+					$default_txt = $txt['TasksManager_who_viewing_config'];
+					break;
+				// Permissions
+				case 'permissions':
+					$allowed_area = allowedTo('tasksmanager_can_edit');
+					$default_txt = $txt['TasksManager_who_viewing_permissions'];
+					break;
+			}
+
+			// Sub action variations?
+			// For all of these you require a specific permission
+			if (isset($actions['sa']) && allowedTo('tasksmanager_can_edit'))
+			{
+				// Change the URL with the subaction
+				$default_url .= ';sa=' . $actions['sa'];
+
+				// Add the text
+				switch ($actions['sa'])
+				{
+					// Tasks
+					case 'tasks':
+						if ($actions['area'] === 'categories')
+							$default_txt = $txt['TasksManager_who_viewing_categories_tasks'];
+						break;
+					// Add
+					case 'add':
+						$default_txt = $txt['TasksManager_who_adding_' . $actions['area']];
+						break;
+					// Edit
+					case 'editp':
+					case 'edit':
+						$default_txt = $txt['TasksManager_who_editing_' . $actions['area']];
+						// Add the id?
+						if (isset($actions['id']))
+							$default_url .= ';id=' . $actions['id'];
+						break;
+					// Booking
+					case 'booking':
+						$default_txt = $txt['TasksManager_who_booking'];
+						break;
+				}
+			}
+
+			// Setup who is they are allowed to see that area
+			if (!empty($allowed_area))
+				$data[$key] = sprintf($default_txt, $default_url);
+		}
 	}
 }

@@ -2,7 +2,7 @@
 
 /**
  * @package Tasks Manager
- * @version 1.0
+ * @version 1.1
  * @author Diego Andrés <diegoandres_cortes@outlook.com>
  * @copyright Copyright (c) 2022, SMF Tricks
  * @license MIT
@@ -18,25 +18,7 @@ class Categories
 	/**
 	 * @var array The subactions of the page
 	 */
-	private $_subactions = [];
-
-	function __construct()
-	{
-		// Can you manage tasks?
-		isAllowedTo('tasksmanager_can_edit');
-
-		// Subactions
-		$this->_subactions = [
-			'projects' => 'project',
-			'tasks' => 'task',
-			'add' => 'manage',
-			'edit' => 'manage',
-			'editp' => 'manage',
-			'save' => 'save',
-			'delete' => 'delete',
-			'deletep' => 'delete',
-		];
-	}
+	private $_subactions;
 
 	/**
 	 * Categories::main()
@@ -48,6 +30,9 @@ class Categories
 	{
 		global $context, $txt;
 
+		// Can you manage tasks?
+		isAllowedTo('tasksmanager_can_edit');
+
 		// Page setup
 		View::page_setup('categories', null, null, null, 'boards');
 
@@ -56,6 +41,18 @@ class Categories
 			'projects' => ['description' => $txt['TasksManager_projects_cat_desc']],
 			'tasks' => ['description' => $txt['TasksManager_tasks_cat_desc']],
 			'add' => ['description' => $txt['TasksManager_add_category_desc']],
+		];
+
+		// Subactions
+		$this->_subactions = [
+			'projects' => 'view',
+			'tasks' => 'view',
+			'add' => 'manage',
+			'edit' => 'manage',
+			'editp' => 'manage',
+			'save' => 'save',
+			'delete' => 'delete',
+			'deletep' => 'delete',
 		];
 
 		// Get the current action
@@ -68,29 +65,37 @@ class Categories
 	 * Loads the list of project categories
 	 * @return array
 	 */
-	public function project()
+	public function view()
 	{
 		global $scripturl, $context, $sourcedir, $modSettings, $txt;
 		
 		// Page setup
-		View::page_setup('projects', 'show_list', 'projects_cat', '?action=tasksmanager;area=categories;sa=projects', 'boards');
+		View::page_setup(
+			(!isset($_REQUEST['sa']) || $_REQUEST['sa'] == 'projects' ? 'projects' : 'tasks'),
+			'show_list',
+			(!isset($_REQUEST['sa']) || $_REQUEST['sa'] == 'projects' ? 'projects' : 'tasks') . '_cat',
+			'?action=tasksmanager;area=categories;sa=' . (!isset($_REQUEST['sa']) || $_REQUEST['sa'] == 'projects' ? 'projects' : 'tasks'),
+			'boards'
+		);
 
 		// Setup the list
 		require_once($sourcedir . '/Subs-List.php');
-		$context['default_list'] = 'projects_categories';
+		$context['default_list'] = (!isset($_REQUEST['sa']) || $_REQUEST['sa'] == 'projects' ? 'projects' : 'tasks') .'_categories';
 
 		// List
 		$listOptions = [
-			'id' => 'projects_categories',
-			'title' => $txt['TasksManager_categories'] . ' - ' . $txt['TasksManager_projects_cat'],
+			'id' => (!isset($_REQUEST['sa']) || $_REQUEST['sa'] == 'projects' ? 'projects' : 'tasks') . '_categories',
+			'title' => $txt['TasksManager_categories'] . ' - ' . $txt['TasksManager_' . (!isset($_REQUEST['sa']) || $_REQUEST['sa'] == 'projects' ? 'projects' : 'tasks') . '_cat'],
 			'items_per_page' => !empty($modSettings['tppm_items_per_page']) ? $modSettings['tppm_items_per_page'] : 20,
-			'base_href' => $scripturl . '?action=tasksmanager;area=categories;sa=projects',
+			'base_href' => $scripturl . '?action=tasksmanager;area=categories;sa=' . (!isset($_REQUEST['sa']) || $_REQUEST['sa'] == 'projects' ? 'projects' : 'tasks'),
 			'default_sort_col' => 'name',
 			'get_items' => [
-				'function' => __NAMESPACE__ . '\Categories::GetprojectCategories',
+				'function' => __NAMESPACE__ . '\Categories::getCategories',
+				'params' => [null, null, (!isset($_REQUEST['sa']) || $_REQUEST['sa'] == 'projects' ? 'projects' : 'tasks')],
 			],
 			'get_count' => [
-				'function' => __NAMESPACE__ . '\Categories::catsCount',
+				'function' => __NAMESPACE__ . '\Categories::countCategories',
+				'params' => [null, null, (!isset($_REQUEST['sa']) || $_REQUEST['sa'] == 'projects' ? 'projects' : 'tasks')],
 			],
 			'no_items_label' => $txt['TasksManager_no_categories'],
 			'no_items_align' => 'center',
@@ -116,7 +121,7 @@ class Categories
 					],
 					'data' => [
 						'sprintf' => [
-							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=categories;sa=editp;id=%1$s">' . $txt['modify'] . '</a>',
+							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=categories;sa=' . (!isset($_REQUEST['sa']) || $_REQUEST['sa'] == 'projects' ? 'editp' : 'edit') . ';id=%1$s">' . $txt['modify'] . '</a>',
 							'params' => [
 								'category_id' => false,
 							],
@@ -135,105 +140,9 @@ class Categories
 					],
 					'data' => [
 						'sprintf' => [
-							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=categories;sa=deletep;id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['TasksManager_category_delete_confirm'] . '\');">' . $txt['delete'] . '</a>',
+							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=categories;sa=' . (!isset($_REQUEST['sa']) || $_REQUEST['sa'] == 'projects' ? 'editp' : 'edit') . ';id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['TasksManager_category_delete_confirm'] . '\');">' . $txt['delete'] . '</a>',
 							'params' => [
 								'category_id' => false,
-							],
-						],
-						'class' => 'centertext',
-					],
-				],
-			],
-		];
-		// Info?
-		if (isset($_REQUEST['deleted']) || isset($_REQUEST['added']) || isset($_REQUEST['updated']))
-		{
-			$listOptions['additional_rows']['updated'] = [
-				'position' => 'top_of_list',
-				'value' => '<div class="infobox">',
-			];
-			$listOptions['additional_rows']['updated']['value'] .= $txt['TasksManager_category_' . (!isset($_REQUEST['deleted']) ? (!isset($_REQUEST['added']) ? (!isset($_REQUEST['updated']) ? '' : 'updated') : 'added') : 'deleted')] . '</div>';
-		}
-		createList($listOptions);
-	}
-
-	/**
-	 * Categories::task()
-	 * 
-	 * Loads the list of task categories
-	 * @return array
-	 */
-	public function task()
-	{
-		global $scripturl, $context, $sourcedir, $modSettings, $txt;
-		
-		// Page setup
-		View::page_setup('tasks', 'show_list', 'tasks_cat', '?action=tasksmanager;area=categories;sa=tasks', 'boards');
-
-		// Setup the list
-		require_once($sourcedir . '/Subs-List.php');
-		$context['default_list'] = 'projects_tasks';
-
-		// List
-		$listOptions = [
-			'id' => 'projects_tasks',
-			'title' => $txt['TasksManager_categories'] . ' - ' . $txt['TasksManager_tasks_cat'],
-			'items_per_page' =>!empty($modSettings['tppm_items_per_page']) ? $modSettings['tppm_items_per_page'] : 20,
-			'base_href' => $scripturl . '?action=tasksmanager;area=categories;sa=tasks',
-			'default_sort_col' => 'name',
-			'get_items' => [
-				'function' => __NAMESPACE__ . '\Categories::GettasksCategories',
-			],
-			'get_count' => [
-				'function' => __NAMESPACE__ . '\Categories::catsCount',
-				'params' => ['tasks']
-			],
-			'no_items_label' => $txt['TasksManager_no_categories'],
-			'no_items_align' => 'center',
-			'columns' => [
-				'name' => [
-					'header' => [
-						'value' => $txt['TasksManager_category_name'],
-						'style' => 'width: 60%;',
-						'class' => 'lefttext',
-					],
-					'data' => [
-						'db' => 'category_name',
-					],
-					'sort' => [
-						'default' => 'category_name',
-						'reverse' => 'category_name DESC',
-					],
-				],
-				'modify' => [
-					'header' => [
-						'value' => $txt['modify'],
-						'class' => 'centertext',
-					],
-					'data' => [
-						'sprintf' => [
-							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=categories;sa=edit;id=%1$s">' . $txt['modify'] . '</a>',
-							'params' => [
-								'category_id' => true,
-							],
-						],
-						'class' => 'centertext',
-					],
-					'sort' => [
-						'default' => 'category_id',
-						'reverse' => 'category_id DESC',
-					],
-				],
-				'delete' => [
-					'header' => [
-						'value' => $txt['delete'],
-						'class' => 'centertext',
-					],
-					'data' => [
-						'sprintf' => [
-							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=categories;sa=delete;id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['TasksManager_category_delete_confirm'] . '\');">' . $txt['delete'] . '</a>',
-							'params' => [
-								'category_id' => true,
 							],
 						],
 						'class' => 'centertext',
@@ -275,9 +184,9 @@ class Categories
 
 			// Set the active tab
 			$context[$context['tasks_menu_name']]['current_subsection'] = $_REQUEST['sa'] == 'editp' ? 'projects' : 'tasks';
-			
-			// Get the category
-			$context['tasks_pp_category'] = ($_REQUEST['sa'] == 'editp' ? $this->GetprojectCategories(0, 1, 'c.category_id', 'WHERE c.category_id = {int:cat}', ['cat' => (int) $_REQUEST['id']]) : $this->GettasksCategories(0, 1, 'c.task_cat_id', 'WHERE c.task_cat_id = {int:cat}', ['cat' => (int) $_REQUEST['id']]));
+
+			// Get the categoy
+			$context['tasks_pp_category'] = $this->getCategories(0, 1, 'category_id', 'WHERE c.' . ($_REQUEST['sa'] == 'editp' ? 'category' : 'task_cat') . '_id = {int:cat}', ['cat' => (int) $_REQUEST['id']], ($_REQUEST['sa'] == 'editp' ? 'projects' : 'tasks'));
 
 			// No category?
 			if (empty($context['tasks_pp_category']))
@@ -356,7 +265,7 @@ class Categories
 		if (!empty($_REQUEST['category_id']))
 		{
 			$smcFunc['db_query']('','
-				UPDATE IGNORE {db_prefix}taskspp_' . ($_REQUEST['category_type'] == 'project'  ? 'project' : 'task') .  '_categories
+				UPDATE {db_prefix}taskspp_' . ($_REQUEST['category_type'] == 'project'  ? 'project' : 'task') .  '_categories
 				SET
 					category_name = {string:category_name}
 				WHERE ' . ($_REQUEST['category_type'] == 'project' ? 'category_id'  : 'task_cat_id') .  ' = {int:cat}',
@@ -370,7 +279,7 @@ class Categories
 		else
 		{
 			$status = 'added';
-			$smcFunc['db_insert']('ignore',
+			$smcFunc['db_insert']('',
 				'{db_prefix}taskspp_' . ($_REQUEST['category_type'] == 'project'  ? 'project' : 'task') .  '_categories',
 				['category_name' => 'string'],
 				[$category_name,],
@@ -383,17 +292,18 @@ class Categories
 	}
 
 	/**
-	 * Categories::GetprojectCategories()
+	 * Categories::getCategories()
 	 * 
-	 * Get the categories for projects
+	 * Get the categories for tasks or projects
 	 * @param int $start The start of the list
 	 * @param int $limit The limit of the list
 	 * @param string $sort The sort order
 	 * @param string $query Any additional queries
 	 * @param array $values The values to be used in the query
-	 * @return void
+	 * @param string $type The type of categories to get
+	 * @return array The task categories
 	 */
-	public static function GetprojectCategories($start, $limit, $sort, $query = null, $values = null)
+	public static function getCategories($start, $limit, $sort, $query = null, $values = null, $type = 'projects')
 	{
 		global $smcFunc;
 
@@ -410,8 +320,8 @@ class Categories
 
 		$request = $smcFunc['db_query']('', '
 			SELECT
-				c.category_id AS category_id, c.category_name
-			FROM {db_prefix}taskspp_project_categories AS c ' . (!empty($query) ? 
+				c.' . ($type == 'projects' ? 'category' : 'task_cat') .  '_id AS category_id, c.category_name AS category_name
+			FROM {db_prefix}taskspp_' . ($type == 'projects' ? 'project' : 'task') .  '_categories AS c ' . (!empty($query) ? 
 				$query : '') . '
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:limit}',
@@ -428,58 +338,13 @@ class Categories
 	}
 
 	/**
-	 * Categories::GettasksCategories()
-	 * 
-	 * Get the categories for tasks
-	 * @param int $start The start of the list
-	 * @param int $limit The limit of the list
-	 * @param string $sort The sort order
-	 * @param string $query Any additional queries
-	 * @param array $values The values to be used in the query
-	 * @return void
-	 */
-	public static function GettasksCategories($start, $limit, $sort, $query = null, $values = null)
-	{
-		global $smcFunc;
-
-		// Categories data
-		$data = [
-			'start' => $start,
-			'limit' => $limit,
-			'sort' => $sort,
-		];
-
-		// Get the rest of the values
-		if (!empty($values) && is_array($values))
-			$data = array_merge($data, $values);
-
-		$request = $smcFunc['db_query']('', '
-			SELECT
-				c.task_cat_id AS category_id, c.category_name
-			FROM {db_prefix}taskspp_task_categories AS c ' . (!empty($query) ? 
-				$query : '') . '
-			ORDER BY {raw:sort}
-			LIMIT {int:start}, {int:limit}',
-			$data
-		);
-
-		$result = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$result[$row['category_id']] = $row;
-
-		$smcFunc['db_free_result']($request);
-
-		return $result;
-	}
-
-	/**
-	 * Categories::GetCategoriesCount()
+	 * Categories::countCategories()
 	 * 
 	 * Get the total number of categories
 	 * @param string $type The type of category (projects or tasks)
 	 * @return int The total number of categories
 	 */
-	public static function catsCount($type = 'projects')
+	public static function countCategories($type = 'projects')
 	{
 		global $smcFunc;
 

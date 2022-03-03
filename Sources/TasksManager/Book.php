@@ -2,7 +2,7 @@
 
 /**
  * @package Tasks Manager
- * @version 1.0
+ * @version 1.1
  * @author Diego Andrés <diegoandres_cortes@outlook.com>
  * @copyright Copyright (c) 2022, SMF Tricks
  * @license MIT
@@ -16,23 +16,14 @@ if (!defined('SMF'))
 class Book
 {
 	/**
-	 * @var array The tasks
+	 * @var array The subactions of the page
+	 */
+	private $_subactions;
+
+	/**
+	 * @var array The tasks in the filter
 	 */
 	private $_tasks = [];
-
-	function __construct()
-	{
-		// Can you manage tasks?
-		isAllowedTo('tasksmanager_can_edit');
-
-		// Subactions
-		$this->_subactions = [
-			'log' => 'list',
-			'booktime' => 'manage',
-			'save' => 'save',
-			'delete' => 'delete',
-		];
-	}
 
 	/**
 	 * Book::main()
@@ -42,7 +33,10 @@ class Book
 	 */
 	public function main()
 	{
-		global $context, $txt;
+		global $context, $txt, $modSettings;
+
+		// Can you manage tasks?
+		isAllowedTo('tasksmanager_can_edit');
 
 		// Page setup
 		View::page_setup('booking', null, null, null, 'calendar');
@@ -53,23 +47,19 @@ class Book
 			'booktime' => ['description' => $txt['TasksManager_booking_booktime_desc']],
 		];
 
+		// Subactions
+		$this->_subactions = [
+			'log' => 'list',
+			'booktime' => 'manage',
+			'save' => 'save',
+			'delete' => 'delete',
+		];
+
+		// Tasks
+		$this->_tasks = Tasks::getTasks(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 'tk.task_name' : 'tk.task_id DESC');
+
 		// Get the current action
 		call_helper(__CLASS__ . '::' . $this->_subactions[isset($_GET['sa'], $this->_subactions[$_GET['sa']]) ? $_GET['sa'] : 'log'] . '#');
-	}
-
-	/**
-	 * Book::tasksList()
-	 * 
-	 * Get a list of tasks for a select
-	 * @return void
-	 */
-	private function tasksList()
-	{
-		$pp_tasks = Tasks::getTasks(0, 1000000, 'tk.task_name');
-		// Add the tasks found
-		if (!empty($pp_tasks))
-			foreach ($pp_tasks as $task)
-				$this->_tasks[$task['task_name']] = $task['task_id'];
 	}
 
 	/**
@@ -89,10 +79,12 @@ class Book
 		require_once($sourcedir . '/Subs-List.php');
 		$context['default_list'] = 'book_log';
 
-		// Tasks
-		$context['tasks_tasks_list'] = Tasks::getTasks(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 'tk.task_name' : 'tk.task_id DESC');
-		// List
-		$context['template_layers'][] = 'list_selector';
+		// Add the filter
+		if (!empty($this->_tasks))
+		{
+			$context['tasks_tasks_list'] = $this->_tasks;
+			$context['template_layers'][] = 'list_selector';
+		}
 
 		// Form URL
 		$context['form_url'] = $scripturl . '?action=tasksmanager;area=booking;sa=log' . (isset($_REQUEST['task']) && $_REQUEST['task'] >= 0 ? ';task=' . $_REQUEST['task'] : '' );
@@ -208,20 +200,21 @@ class Book
 	 */
 	public function manage()
 	{
-		global $context, $scripturl, $txt, $modSettings;
+		global $context, $scripturl, $txt;
 
 		// Page setup
 		View::page_setup('booking', 'manage', 'booking_' . $_REQUEST['sa'], '?action=tasksmanager;area=booking;sa=' . $_REQUEST['sa'], 'settings');
 
-		// Tasks
-		$this->tasksList();
+		// Any tasks?
+		if (empty($this->_tasks))
+			fatal_lang_error('TasksManager_no_tasks', false);
 
 		// Settings
 		$context['tasks_pp_settings'] = [
 			'task_id' => [
 				'label' => $txt['TasksManager_tasks'],
 				'type' => 'select',
-				'options' => $this->_tasks,
+				'options' => View::itemSelect($this->_tasks, 'task_id', 'task_name'),
 			],
 			'time_worked_hours' => [
 				'label' => $txt['TasksManager_booking_time_hours'],
@@ -265,7 +258,7 @@ class Book
 			fatal_lang_error('TasksManager_no_time_worked', false);
 
 		// Book the time
-		$smcFunc['db_insert']('ignore',
+		$smcFunc['db_insert']('',
 			'{db_prefix}taskspp_timesheet',
 			[
 				'task_id' => 'int',

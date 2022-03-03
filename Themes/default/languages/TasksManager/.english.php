@@ -2,7 +2,7 @@
 
 /**
  * @package Tasks Manager
- * @version 1.0
+ * @version 1.1
  * @author Diego Andrés <diegoandres_cortes@outlook.com>
  * @copyright Copyright (c) 2022, SMF Tricks
  * @license MIT
@@ -68,6 +68,7 @@ $txt['TasksManager_tasks_details'] = 'Task details';
 $txt['TasksManager_tasks_time_booked'] = 'Time booked';
 $txt['TasksManager_tasks_estimated_hours'] = 'Estimated hours';
 $txt['TasksManager_tasks_estimated_unknown'] = 'Unknown';
+$txt['TasksManager_tasks_total'] = 'Total Tasks';
 
 // Categories
 $txt['TasksManager_categories'] = 'Categories';
@@ -200,3 +201,26 @@ $txt['TasksManager_no_booking'] = 'No booking selected.';
 $txt['TasksManager_no_booking_time'] = 'No time entered.';
 $txt['TasksManager_no_time_worked'] = 'No time worked entered.';
 $txt['TasksManager_no_total_time'] = 'None';
+
+// Who
+$txt['TasksManager_who_viewing_tasksmanager'] = 'Viewing the <a href="%1$s">%2$s</a>.';
+$txt['TasksManager_who_viewing_projects'] = 'Viewing the <a href="%1$s">Projects List</a>.';
+$txt['TasksManager_who_viewing_tasks'] = 'Viewing the <a href="%1$s">Tasks List</a>.';
+$txt['TasksManager_who_viewing_bookings'] = 'Viewing the <a href="%1$s">Booking List</a>.';
+$txt['TasksManager_who_viewing_categories'] = 'Viewing the <a href="%1$s">Projects Categories</a>.';
+$txt['TasksManager_who_viewing_categories_tasks'] = 'Viewing the <a href="%1$s">Tasks Categories</a>.';
+$txt['TasksManager_who_viewing_status'] = 'Viewing the <a href="%1$s">Status List</a>.';
+$txt['TasksManager_who_viewing_types'] = 'Viewing the <a href="%1$s">Types List</a>.';
+$txt['TasksManager_who_viewing_config'] = 'Managing the <a href="%1$s">Tasks Settings</a>.';
+$txt['TasksManager_who_viewing_permissions'] = 'Managing the <a href="%1$s">Tasks Permissions</a>.';
+$txt['TasksManager_who_adding_categories'] = 'Adding a new <a href="%1$s">Category</a> for Projects or Tasks.';
+$txt['TasksManager_who_adding_status'] = 'Adding a new <a href="%1$s">Status</a> for Projects or Tasks.';
+$txt['TasksManager_who_adding_types'] = 'Adding a new <a href="%1$s">Type</a> for Projects or Tasks.';
+$txt['TasksManager_who_adding_projects'] = 'Adding a new <a href="%1$s">Project</a>.';
+$txt['TasksManager_who_adding_tasks'] = 'Adding a new <a href="%1$s">Task</a>.';
+$txt['TasksManager_who_booking'] = '<a href="%1$s">Booking</a> time for a task.';
+$txt['TasksManager_who_editing_categories'] = 'Editing a <a href="%1$s">Category</a> for Projects or Tasks.';
+$txt['TasksManager_who_editing_status'] = 'Editing a <a href="%1$s">Status</a> for Projects or Tasks.';
+$txt['TasksManager_who_editing_types'] = 'Editing a <a href="%1$s">Type</a> for Projects or Tasks.';
+$txt['TasksManager_who_editing_projects'] = 'Editing a <a href="%1$s">Project</a>.';
+$txt['TasksManager_who_editing_tasks'] = 'Editing a <a href="%1$s">Task</a>.';

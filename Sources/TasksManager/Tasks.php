@@ -2,7 +2,7 @@
 
 /**
  * @package Tasks Manager
- * @version 1.0
+ * @version 1.1
  * @author Diego Andrés <diegoandres_cortes@outlook.com>
  * @copyright Copyright (c) 2022, SMF Tricks
  * @license MIT
@@ -18,7 +18,7 @@ class Tasks
 	/**
 	 * @var array The subactions of the page
 	 */
-	private $_subactions = [];
+	private $_subactions;
 
 	/**
 	 * @var array The categories
@@ -40,8 +40,25 @@ class Tasks
 	 */
 	private $_statuses = [];
 
-	function __construct()
+	/**
+	 * Tasks::main()
+	 * 
+	 * Setup the tasks details and load the action
+	 * @return array
+	 */
+	public function main()
 	{
+		global $context, $txt, $modSettings;
+
+		// Page setup
+		View::page_setup('tasks', null, null, null, 'posts');
+
+		// Tabs
+		$context[$context['tasks_menu_name']]['tab_data']['tabs'] = [
+			'index' => ['description' => $txt['TasksManager_tasks_index_desc']],
+			'add' => ['description' => $txt['TasksManager_tasks_add_desc']],
+		];
+
 		// Subactions
 		$this->_subactions = [
 			'index' => 'list',
@@ -53,26 +70,15 @@ class Tasks
 			'savetopic' => 'savetopic',
 			'deletetopic' => 'deletetopic',
 		];
-	}
 
-	/**
-	 * Tasks::main()
-	 * 
-	 * Setup the tasks details and load the action
-	 * @return array
-	 */
-	public function main()
-	{
-		global $context, $txt;
+		// Projects
+		$this->_projects = Projects::getProjects(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 'p.project_title' : 'p.project_id DESC');
 
-		// Page setup
-		View::page_setup('tasks', null, null, null, 'posts');
+		// Categories
+		$this->_categories = Categories::getCategories(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 'category_name' : 'category_id DESC', null, null, 'tasks');
 
-		// Tabs
-		$context[$context['tasks_menu_name']]['tab_data']['tabs'] = [
-			'index' => ['description' => $txt['TasksManager_tasks_index_desc']],
-			'add' => ['description' => $txt['TasksManager_tasks_add_desc']],
-		];
+		// Statuses
+		$this->_statuses = Status::getStatus(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 's.status_name' : 's.status_id DESC');
 
 		// Get the current action
 		call_helper(__CLASS__ . '::' . $this->_subactions[isset($_GET['sa'], $this->_subactions[$_GET['sa']]) ? $_GET['sa'] : 'index'] . '#');
@@ -95,14 +101,18 @@ class Tasks
 		require_once($sourcedir . '/Subs-List.php');
 		$context['default_list'] = 'tasks_list';
 
-		// Projects
-		$context['tasks_projects_list'] = Projects::getProjects(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 'p.project_title' : 'p.project_id DESC');
-		// Status
-		$context['tasks_status_list'] = Status::getStatus(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 's.status_name' : 's.status_id DESC');
-		// Categories
-		$context['tasks_category_list'] = Categories::GettasksCategories(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 'c.category_name' : 'category_id DESC');
-		// List
-		$context['template_layers'][] = 'list_selector';
+		// Set the filter
+		if (!empty($this->_projects) || !empty($this->_statuses) || !empty($this->_categories))
+		{
+			// Projects
+			$context['tasks_projects_list'] = $this->_projects;
+			//Categories
+			$context['tasks_category_list'] = $this->_categories;
+			// Statuses
+			$context['tasks_status_list'] = $this->_statuses;
+			// Filter layer
+			$context['template_layers'][] = 'list_selector';
+		}
 
 		// Form URL
 		$context['form_url'] = $scripturl . '?action=tasksmanager;area=tasks;sa=index' . (isset($_REQUEST['project']) && $_REQUEST['project'] >= 0 ? ';project=' . $_REQUEST['project'] : '' ) . (isset($_REQUEST['status']) && $_REQUEST['status'] >= 0 ? ';status=' . $_REQUEST['status'] : '' ) . (isset($_REQUEST['category']) && $_REQUEST['category'] >= 0 ? ';category=' . $_REQUEST['category'] : '' );
@@ -134,8 +144,8 @@ class Tasks
 						{
 							$title = '<h6>' . $row['task_name'] . '</h6>';
 
-							if (!empty($row['topic_id']))
-								$title = '<h6><a href="' . $scripturl . '?topic=' . $row['topic_id'] . '.0" title="' . $row['task_name'] . '">' . $row['task_name'] . '</a></h6>';
+							if (isset($row['id_topic']) && !empty($row['id_topic']))
+								$title = '<h6><a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0" title="' . $row['task_name'] . '">' . $row['task_name'] . '</a></h6>';
 
 							$title .= (!empty($row['task_desc']) ? '<span class="smalltext">' . parse_bbc($row['task_desc']) . '</span>' : '');
 
@@ -169,6 +179,7 @@ class Tasks
 							// Actual hours
 							$hours = $row['hours_worked'] + floor($row['minutes_worked'] / 60);
 
+							// Time Booked for this task
 							$details .= '<br /><strong>'. $txt['TasksManager_tasks_time_booked'] . ':</strong> ' . (!empty($hours) || !empty($minutes) ? sprintf('%02d', $hours). ':' . sprintf('%02d', $minutes) : $txt['TasksManager_no_total_time']);
 
 							// Start Date
@@ -224,7 +235,9 @@ class Tasks
 					],
 					'data' => [
 						'sprintf' => [
-							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=tasks;sa=edit;id=%1$s">' . $txt['modify'] . '</a>',
+							'format' => '
+								<a href="' . $scripturl . '?action=tasksmanager;area=tasks;sa=edit;id=%1$s">' . $txt['modify'] . '</a><br>
+								<a href="' . $scripturl . '?action=tasksmanager;area=tasks;sa=delete;id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['quickmod_confirm'] . '\');">' . $txt['delete'] . '</a>',
 							'params' => [
 								'task_id' => false,
 							],
@@ -234,22 +247,6 @@ class Tasks
 					'sort' => [
 						'default' => 'task_id',
 						'reverse' => 'task_id DESC',
-					],
-				],
-				'delete' => [
-					'header' => [
-						'value' => $txt['delete'],
-						'class' => 'centertext',
-						'style' => 'width: 7%;',
-					],
-					'data' => [
-						'sprintf' => [
-							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=tasks;sa=delete;id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['quickmod_confirm'] . '\');">' . $txt['delete'] . '</a>',
-							'params' => [
-								'task_id' => false,
-							],
-						],
-						'class' => 'centertext',
 					],
 				],
 			],
@@ -293,14 +290,14 @@ class Tasks
 		// Editing?
 		if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'edit')
 		{
-			// Type id
+			// Task id
 			if (!isset($_REQUEST['id']) || empty($_REQUEST['id']))
 				fatal_lang_error('TasksManager_no_task', false);
 
-			// Get the type
+			// Get the task
 			$context['tasks_pp_task'] = Tasks::getTasks(0, 1, 'tk.task_id', 'WHERE tk.task_id = {int:id}', ['id' => (int) $_REQUEST['id']]);
 
-			// No type?
+			// No task?
 			if (empty($context['tasks_pp_task']))
 				fatal_lang_error('TasksManager_no_task', false);
 			else
@@ -328,11 +325,11 @@ class Tasks
 				maxDate: "' . $modSettings['cal_maxyear'] . '-12-31",
 				yearRange: "' . $modSettings['cal_minyear'] . ':' . $modSettings['cal_maxyear'] . '",
 				hideIfNoPrevNext: true,
-				monthNames: ["' . implode('", "', $txt['months_titles']) . '"],
-				monthNamesShort: ["' . implode('", "', $txt['months_short']) . '"],
-				dayNames: ["' . implode('", "', $txt['days']) . '"],
-				dayNamesShort: ["' . implode('", "', $txt['days_short']) . '"],
-				dayNamesMin: ["' . implode('", "', $txt['days_short']) . '"],
+				monthNames: ["' . implode('", "', (array) $txt['months_titles']) . '"],
+				monthNamesShort: ["' . implode('", "', (array) $txt['months_short']) . '"],
+				dayNames: ["' . implode('", "', (array) $txt['days']) . '"],
+				dayNamesShort: ["' . implode('", "', (array) $txt['days_short']) . '"],
+				dayNamesMin: ["' . implode('", "', (array) $txt['days_short']) . '"],
 				prevText: "' . $txt['prev_month'] . '",
 				nextText: "' . $txt['next_month'] . '",
 			});
@@ -349,14 +346,6 @@ class Tasks
 			});
 		', true);
 
-		// Categories
-		$this->categories();
-
-		// Statuses
-		$this->statuses();
-
-		// Projects
-		$this->projects();
 
 		// Settings
 		$context['tasks_pp_settings'] = [
@@ -374,19 +363,19 @@ class Tasks
 				'label' => $txt['TasksManager_tasks_project'],
 				'value' => !empty($context['tasks_pp_task']['project_id']) ? $context['tasks_pp_task']['project_id'] : '',
 				'type' => 'select',
-				'options' => $this->_projects,
+				'options' => View::itemSelect($this->_projects, 'project_id', 'project_title', $txt['TasksManager_tasks_no_project']),
 			],
 			'task_cat_id' => [
 				'label' => $txt['TasksManager_tasks_category'],
 				'value' => !empty($context['tasks_pp_task']['task_cat_id']) ? $context['tasks_pp_task']['task_cat_id'] : 0,
 				'type' => 'select',
-				'options' => $this->_categories,
+				'options' => View::itemSelect($this->_categories, 'category_id', 'category_name', $txt['TasksManager_projects_no_category']),
 			],
 			'task_status_id' => [
 				'label' => $txt['TasksManager_tasks_status'],
 				'value' => !empty($context['tasks_pp_task']['task_status_id']) ? $context['tasks_pp_task']['task_status_id'] : 0,
 				'type' => 'select',
-				'options' => $this->_statuses,
+				'options' => View::itemSelect($this->_statuses, 'status_id', 'status_name', $txt['TasksManager_projects_no_status']),
 			],
 			'estimated_hrs' => [
 				'label' => $txt['TasksManager_tasks_estimated_hours'],
@@ -425,89 +414,12 @@ class Tasks
 	}
 
 	/**
-	 * Tasks::categories()
-	 * 
-	 * Load a list of categories for a select
-	 * @return void
-	 */
-	private function categories()
-	{
-		global $txt;
-
-		$this->_categories = [
-			$txt['TasksManager_projects_no_category'] => 0,
-		];
-		$pp_categories = Categories::GettasksCategories(0, 1000000, 'c.task_cat_id');
-		// Add the categories we got
-		if (!empty($pp_categories))
-			foreach ($pp_categories as $category)
-				$this->_categories[$category['category_name']] = $category['category_id'];
-	}
-
-	/**
-	 * Tasks::statuses()
-	 * 
-	 * Load a list of statuses for a select
-	 * @return void
-	 */
-	private function statuses()
-	{
-		global $txt;
-
-		$this->_statuses = [
-			$txt['TasksManager_projects_no_status'] => 0,
-		];
-		$pp_statuses = Status::getStatus(0, 1000000, 's.status_id');
-		// Add the statuses we got
-		if (!empty($pp_statuses))
-			foreach ($pp_statuses as $status)
-				$this->_statuses[$status['status_name']] = $status['status_id'];
-	}
-
-	/**
-	 * Tasks::projects()
-	 * 
-	 * Load a list of projects for a select
-	 * @return void
-	 */
-	private function projects()
-	{
-		global $txt;
-
-		$this->_projects = [
-			$txt['TasksManager_tasks_no_project'] => 0,
-		];
-		$pp_projects = Projects::getProjects(0, 1000000, 'p.project_id');
-		// Add the projects we got
-		if (!empty($pp_projects))
-			foreach ($pp_projects as $project)
-				$this->_projects[$project['project_title']] = $project['project_id'];
-	}
-
-	/**
-	 * Tasks::taskList()
-	 * 
-	 * Load a list of tasks for a select
-	 * @return void
-	 */
-	private function tasksList()
-	{
-		$pp_tasks = $this->getTasks(0, 1000000, 'tk.task_name', 'WHERE tk.topic_id = {int:no_topic}', ['no_topic' => 0]);
-		// Add the tasks found
-		if (!empty($pp_tasks))
-		{
-			foreach ($pp_tasks as $task)
-				$this->_tasks[$task['task_name']] = $task['task_id'];
-		}
-	}
-
-	/**
 	 * Tasks::save()
 	 * 
 	 * Save a new or edited task
 	 * @return void
 	 */
-	public static function save()
+	public function save()
 	{
 		global $smcFunc;
 
@@ -534,7 +446,7 @@ class Tasks
 		if (!empty($_REQUEST['task_id']))
 		{
 			$smcFunc['db_query']('','
-				UPDATE IGNORE {db_prefix}taskspp_tasks
+				UPDATE {db_prefix}taskspp_tasks
 				SET
 					task_name = {string:task_name},
 					task_desc = {string:task_desc},
@@ -591,7 +503,7 @@ class Tasks
 			}
 
 			$status = 'added';
-			$smcFunc['db_insert']('ignore',
+			$smcFunc['db_insert']('',
 				'{db_prefix}taskspp_tasks',
 				$pp_columns,
 				$pp_values,
@@ -612,7 +524,7 @@ class Tasks
 	 * @param string $sort The sort order
 	 * @param string $query Any additional queries
 	 * @param array $values The values to be used in the query
-	 * @return void
+	 * @return array The tasks
 	 */
 	public static function getTasks($start, $limit, $sort, $query = null, $values = null)
 	{
@@ -631,16 +543,17 @@ class Tasks
 
 		$request = $smcFunc['db_query']('', '
 			SELECT
-				tk.task_id, tk.topic_id, tk.task_name, tk.task_cat_id, tk.project_id,
+				tk.task_id, tk.task_name, tk.task_cat_id, tk.project_id,
 				tk.start_date, tk.end_date, tk.task_desc, tk.task_status_id, tk.estimated_hrs,
-				c.category_name, s.status_name, p.project_title, SUM(ts.hours_worked) AS hours_worked, SUM(ts.minutes_worked) AS minutes_worked
+				c.category_name, s.status_name, p.project_title, SUM(ts.hours_worked) AS hours_worked, SUM(ts.minutes_worked) AS minutes_worked, t.id_topic
 			FROM {db_prefix}taskspp_tasks AS tk
+				LEFT JOIN {db_prefix}topics AS t ON (t.tasks_task_id = tk.task_id)
 				LEFT JOIN {db_prefix}taskspp_timesheet AS ts ON (ts.task_id = tk.task_id)
 				LEFT JOIN {db_prefix}taskspp_projects AS p ON (p.project_id = tk.project_id)
 				LEFT JOIN {db_prefix}taskspp_task_categories AS c ON (c.task_cat_id = tk.task_cat_id)
 				LEFT JOIN {db_prefix}taskspp_project_status AS s ON (s.status_id = tk.task_status_id) ' . (!empty($query) ? 
 				$query : '') . '
-			GROUP BY tk.task_id
+			GROUP BY tk.task_id, c.category_name, s.status_name, p.project_title, t.id_topic
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:limit}',
 			$data
@@ -751,18 +664,24 @@ class Tasks
 		View::page_setup('tasks', 'manage', 'add_topic_task',  '?action=tasksmanager;area=tasks;sa=' . $_REQUEST['sa'] . (!empty($_REQUEST['id']) ? ';id=' . $_REQUEST['id'] : '') . ';' . $context['session_var'] . '=' . $context['session_id'], 'approve');
 
 		// Add some topic context
-		$request = $smcFunc['db_query']('', '
-			SELECT
-				t.id_topic, m.subject
-			FROM {db_prefix}topics AS t
-				LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
-			WHERE t.id_topic = {int:id}',
-			[
-				'id' => (int) $_REQUEST['id'],
-			]
-		);
-		list ($context['task_topic_id'], $context['task_topic_subject']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		if (($context['task_topic_id'] = cache_get_data('tasks_addtopic_' . $_REQUEST['id'], 3600)) === null)
+		{
+			$request = $smcFunc['db_query']('', '
+				SELECT
+					t.id_topic, m.subject
+				FROM {db_prefix}topics AS t
+					LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
+				WHERE t.id_topic = {int:id}',
+				[
+					'id' => (int) $_REQUEST['id'],
+				]
+			);
+			list ($context['task_topic_id'], $context['task_topic_subject']) = $smcFunc['db_fetch_row']($request);
+			$smcFunc['db_free_result']($request);
+
+			cache_put_data('tasks_addtopic_' . $_REQUEST['id'], $context['task_topic_id'], 3600);
+		}
+			
 		$context['TasksManager_adding_topic'] = $txt['TasksManager_adding_topic_task'];
 
 		// Check again for the topic
@@ -773,11 +692,15 @@ class Tasks
 		$context['template_layers'][]= 'add_topic';
 
 		// Get the tasks that don't have a topic
-		$this->tasksList();
+		$this->_tasks = self::getTasks(0, 1000000, 'tk.task_name', 'WHERE t.id_topic IS NULL');
 
 		// Check if there are any tasks available
 		if (empty($this->_tasks))
 			fatal_lang_error('TasksManager_no_tasks_available', false);
+
+		// Sort the tasks for the select
+		$this->_tasks = View::itemSelect($this->_tasks, 'task_id', 'task_name', '');
+		unset($this->_tasks[0]);
 
 		// Settings
 		$context['tasks_pp_settings'] = [
@@ -786,7 +709,7 @@ class Tasks
 				'type' => 'select',
 				'options' => $this->_tasks,
 			],
-			'topic_id' => [
+			'id_topic' => [
 				'value' => (int) $_REQUEST['id'],
 				'type' => 'hidden',
 			],
@@ -816,37 +739,25 @@ class Tasks
 		isAllowedTo('tasksmanager_can_edit');
 
 		// Task and topic?
-		if (empty($_REQUEST['task_id']) || empty($_REQUEST['topic_id']))
+		if (empty($_REQUEST['task_id']) || empty($_REQUEST['id_topic']))
 			fatal_lang_error('TasksManager_no_topic', false);
 
 		checkSession();
 
-		// User might add a different topic to a task so let's drop it from any other task
-		$smcFunc['db_query']('', '
-			UPDATE {db_prefix}taskspp_tasks
-			SET
-				topic_id = {int:no_topic}
-			WHERE topic_id = {int:topic_id}',
-			[
-				'no_topic' => 0,
-				'topic_id' => (int) $_REQUEST['topic_id'],
-			]
-		);
-
-		// Add the topic to the task
+		// Add the task to the topic
 		$smcFunc['db_query']('','
-			UPDATE IGNORE {db_prefix}taskspp_tasks
+			UPDATE {db_prefix}topics
 			SET
-				topic_id = {int:topic_id}
-			WHERE task_id = {int:id}',
+				tasks_task_id = {int:task_id}
+			WHERE id_topic = {int:topic}',
 			[
-				'id' => (int) $_REQUEST['task_id'],
-				'topic_id' => (int) $_REQUEST['topic_id'],
+				'task_id' => (int) $_REQUEST['task_id'],
+				'topic' => (int) $_REQUEST['id_topic'],
 			]
 		);
 
 		// Redirect
-		redirectexit('topic=' . $_REQUEST['topic_id'] . '.0');
+		redirectexit('topic=' . $_REQUEST['id_topic'] . '.0');
 	}
 
 	/**
@@ -869,15 +780,15 @@ class Tasks
 		// Sesh
 		checkSession('get');
 
-		// Drop this topic from the task (or tasks lol)
+		// Drop this task from the topic
 		$smcFunc['db_query']('','
-			UPDATE IGNORE {db_prefix}taskspp_tasks
+			UPDATE {db_prefix}topics
 			SET
-				topic_id = {int:id}
-			WHERE topic_id = {int:topic_id}',
+				tasks_task_id = {int:id}
+			WHERE id_topic = {int:id_topic}',
 			[
 				'id' => 0,
-				'topic_id' => (int) $_REQUEST['id'],
+				'id_topic' => (int) $_REQUEST['id'],
 			]
 		);
 

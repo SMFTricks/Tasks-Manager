@@ -2,7 +2,7 @@
 
 /**
  * @package Tasks Manager
- * @version 1.0
+ * @version 1.1
  * @author Diego Andrés <diegoandres_cortes@outlook.com>
  * @copyright Copyright (c) 2022, SMF Tricks
  * @license MIT
@@ -18,7 +18,7 @@ class Projects
 	/**
 	 * @var array The subactions of the page
 	 */
-	private $_subactions = [];
+	private $_subactions;
 
 	/**
 	 * @var array The categories
@@ -35,18 +35,6 @@ class Projects
 	 */
 	private $_statuses = [];
 
-	function __construct()
-	{
-		// Subactions
-		$this->_subactions = [
-			'index' => 'list',
-			'add' => 'manage',
-			'edit' => 'manage',
-			'save' => 'save',
-			'delete' => 'delete',
-		];
-	}
-
 	/**
 	 * Projects::main()
 	 * 
@@ -55,7 +43,7 @@ class Projects
 	 */
 	public function main()
 	{
-		global $context, $txt;
+		global $context, $txt, $modSettings;
 
 		// Page setup
 		View::page_setup('projects', null, null, null, 'reports');
@@ -65,6 +53,24 @@ class Projects
 			'index' => ['description' => $txt['TasksManager_projects_index_desc']],
 			'add' => ['description' => $txt['TasksManager_projects_add_desc']],
 		];
+
+		// Subactions
+		$this->_subactions = [
+			'index' => 'list',
+			'add' => 'manage',
+			'edit' => 'manage',
+			'save' => 'save',
+			'delete' => 'delete',
+		];
+
+		// Categories
+		$this->_categories = Categories::getCategories(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 'category_name' : 'category_id DESC');
+
+		// Statuses
+		$this->_statuses = Status::getStatus(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 's.status_name' : 's.status_id DESC');
+
+		// Types
+		$this->_types = Types::getTypes(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 'type_name' : 'type_id DESC');
 
 		// Get the current action
 		call_helper(__CLASS__ . '::' . $this->_subactions[isset($_GET['sa'], $this->_subactions[$_GET['sa']]) ? $_GET['sa'] : 'index'] . '#');
@@ -87,15 +93,18 @@ class Projects
 		require_once($sourcedir . '/Subs-List.php');
 		$context['default_list'] = 'projects_list';
 
-		// Status
-		$context['tasks_status_list'] = Status::getStatus(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 's.status_name' : 's.status_id DESC');
-		// Categories
-		$context['tasks_category_list'] = Categories::GetprojectCategories(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 'c.category_name' : 'category_id DESC');
-		// Types
-		$context['tasks_type_list'] = Types::getTypes(0, !empty($modSettings['tppm_items_filter']) ? $modSettings['tppm_items_filter'] : 25, !empty($modSettings['tppm_filter_sort']) ? 't.type_name' : 'type_id DESC');
-
-		// List
-		$context['template_layers'][] = 'list_selector';
+		// Set the filter
+		if (!empty($this->_types) || !empty($this->_statuses) || !empty($this->_categories))
+		{
+			// Types
+			$context['tasks_type_list'] = $this->_types;
+			//Categories
+			$context['tasks_category_list'] = $this->_categories;
+			// Statuses
+			$context['tasks_status_list'] = $this->_statuses;
+			// Filter layer
+			$context['template_layers'][] = 'list_selector';
+		}
 
 		// Form URL
 		$context['form_url'] = $scripturl . '?action=tasksmanager;area=projects;sa=index' . (isset($_REQUEST['status']) && $_REQUEST['status'] >= 0 ? ';status=' . $_REQUEST['status'] : '' ) . (isset($_REQUEST['category']) && $_REQUEST['category'] >= 0 ? ';category=' . $_REQUEST['category'] : '' ) . (isset($_REQUEST['type']) && $_REQUEST['type'] >= 0 ? ';type=' . $_REQUEST['type'] : '' );
@@ -187,10 +196,19 @@ class Projects
 						'function' => function($row) use ($txt, $scripturl)
 						{
 							// Status
-							$status = (!empty($row['status_id']) ? $row['status_name'] : $txt['TasksManager_projects_no_status']);
+							$status = '<strong>' . $txt['TasksManager_status'] . ':</strong> ' . (!empty($row['status_id']) ? $row['status_name'] : $txt['TasksManager_projects_no_status']);
 
 							// Tasks Link
-							$status .= '<br /><a href="' . $scripturl . '?action=tasksmanager;area=tasks;sa=index;project=' . $row['project_id'] . '">' . $txt['TasksManager_projects_view_tasks'] . '</a>';
+							$status .= '<br /><strong>' . $txt['TasksManager_tasks'] . ':</strong> <a href="' . $scripturl . '?action=tasksmanager;area=tasks;sa=index;project=' . $row['project_id'] . '" title="' . $txt['TasksManager_tasks_total'] . '">' . $row['total_tasks'] . '</a>';
+
+							// Minutes
+							$minutes = (!empty($row['minutes_worked']) ? ($row['minutes_worked'] % 60) : 0);
+
+							// Actual hours
+							$hours = $row['hours_worked'] + floor($row['minutes_worked'] / 60);
+
+							// Time Booked for this project
+							$status .= '<br /><strong>'. $txt['TasksManager_tasks_time_booked'] . ':</strong> ' . (!empty($hours) || !empty($minutes) ? sprintf('%02d', $hours). ':' . sprintf('%02d', $minutes) : $txt['TasksManager_no_total_time']);
 
 							return  $status;
 						},
@@ -209,7 +227,10 @@ class Projects
 					],
 					'data' => [
 						'sprintf' => [
-							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=projects;sa=edit;id=%1$s">' . $txt['modify'] . '</a>',
+							'format' => '
+								<a href="' . $scripturl . '?action=tasksmanager;area=projects;sa=edit;id=%1$s">' . $txt['modify'] . '</a><br>
+								<a href="' . $scripturl . '?action=tasksmanager;area=projects;sa=delete;id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['quickmod_confirm'] . '\');">' . $txt['delete'] . '</a>
+								',
 							'params' => [
 								'project_id' => false,
 							],
@@ -221,22 +242,7 @@ class Projects
 						'reverse' => 'project_id DESC',
 					],
 				],
-				'delete' => [
-					'header' => [
-						'value' => $txt['delete'],
-						'class' => 'centertext',
-						'style' => 'width: 7%;',
-					],
-					'data' => [
-						'sprintf' => [
-							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=projects;sa=delete;id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['quickmod_confirm'] . '\');">' . $txt['delete'] . '</a>',
-							'params' => [
-								'project_id' => false,
-							],
-						],
-						'class' => 'centertext',
-					],
-				],
+			
 			],
 		];
 		// Info?
@@ -282,10 +288,10 @@ class Projects
 			if (!isset($_REQUEST['id']) || empty($_REQUEST['id']))
 				fatal_lang_error('TasksManager_no_project', false);
 
-			// Get the type
+			// Get the project
 			$context['tasks_pp_project'] = Projects::getProjects(0, 1, 'p.project_id', 'WHERE p.project_id = {int:id}', ['id' => (int) $_REQUEST['id']]);
 
-			// No type?
+			// No project?
 			if (empty($context['tasks_pp_project']))
 				fatal_lang_error('TasksManager_no_project', false);
 			else
@@ -313,11 +319,11 @@ class Projects
 				maxDate: "' . $modSettings['cal_maxyear'] . '-12-31",
 				yearRange: "' . $modSettings['cal_minyear'] . ':' . $modSettings['cal_maxyear'] . '",
 				hideIfNoPrevNext: true,
-				monthNames: ["' . implode('", "', $txt['months_titles']) . '"],
-				monthNamesShort: ["' . implode('", "', $txt['months_short']) . '"],
-				dayNames: ["' . implode('", "', $txt['days']) . '"],
-				dayNamesShort: ["' . implode('", "', $txt['days_short']) . '"],
-				dayNamesMin: ["' . implode('", "', $txt['days_short']) . '"],
+				monthNames: ["' . implode('", "', (array) $txt['months_titles']) . '"],
+				monthNamesShort: ["' . implode('", "', (array) $txt['months_short']) . '"],
+				dayNames: ["' . implode('", "', (array) $txt['days']) . '"],
+				dayNamesShort: ["' . implode('", "', (array) $txt['days_short']) . '"],
+				dayNamesMin: ["' . implode('", "', (array) $txt['days_short']) . '"],
 				prevText: "' . $txt['prev_month'] . '",
 				nextText: "' . $txt['next_month'] . '",
 			});
@@ -333,15 +339,6 @@ class Projects
 				}
 			});
 		', true);
-
-		// Types
-		$this->types();
-
-		// Categories
-		$this->categories();
-
-		// Statuses
-		$this->statuses();
 
 		// Settings
 		$context['tasks_pp_settings'] = [
@@ -372,19 +369,19 @@ class Projects
 				'label' => $txt['TasksManager_projects_category'],
 				'value' => !empty($context['tasks_pp_project']['category_id']) ? $context['tasks_pp_project']['category_id'] : 0,
 				'type' => 'select',
-				'options' => $this->_categories,
+				'options' => View::itemSelect($this->_categories, 'category_id', 'category_name', $txt['TasksManager_projects_no_category']),
 			],
 			'type_id' => [
 				'label' => $txt['TasksManager_projects_type'],
 				'value' => !empty($context['tasks_pp_project']['type_id']) ? $context['tasks_pp_project']['type_id'] : 0,
 				'type' => 'select',
-				'options' => $this->_types,
+				'options' => View::itemSelect($this->_types, 'type_id', 'type_name', $txt['TasksManager_projects_no_type']),
 			],
 			'status_id' => [
 				'label' => $txt['TasksManager_projects_status'],
 				'value' => !empty($context['tasks_pp_project']['status_id']) ? $context['tasks_pp_project']['status_id'] : 0,
 				'type' => 'select',
-				'options' => $this->_statuses,
+				'options' => View::itemSelect($this->_statuses, 'status_id', 'status_name', $txt['TasksManager_projects_no_status']),
 			],
 			'start_date' => [
 				'label' => $txt['TasksManager_projects_start_date'],
@@ -418,72 +415,12 @@ class Projects
 	}
 
 	/**
-	 * Projects::types()
-	 * 
-	 * Get a list of project types for a select
-	 * @return void
-	 */
-	private function types()
-	{
-		global $txt;
-
-		$this->_types = [
-			$txt['TasksManager_projects_no_type'] => 0,
-		];
-		$pp_types = Types::getTypes(0, 1000000, 't.type_id');
-		// Add the types we got
-		if (!empty($pp_types))
-			foreach ($pp_types as $type)
-				$this->_types[$type['type_name']] = $type['type_id'];
-	}
-
-	/**
-	 * Projects::categories()
-	 * 
-	 * Get a list of categories for a select
-	 * @return void
-	 */
-	private function categories()
-	{
-		global $txt;
-
-		$this->_categories = [
-			$txt['TasksManager_projects_no_category'] => 0,
-		];
-		$pp_categories = Categories::GetprojectCategories(0, 1000000, 'c.category_id');
-		// Add the categories we got
-		if (!empty($pp_categories))
-			foreach ($pp_categories as $category)
-				$this->_categories[$category['category_name']] = $category['category_id'];
-	}
-
-	/**
-	 * Projects::statuses()
-	 * 
-	 * Get a list of statuses for a select
-	 * @return void
-	 */
-	private function statuses()
-	{
-		global $txt;
-
-		$this->_statuses = [
-			$txt['TasksManager_projects_no_status'] => 0,
-		];
-		$pp_statuses = Status::getStatus(0, 1000000, 's.status_id');
-		// Add the statuses we got
-		if (!empty($pp_statuses))
-			foreach ($pp_statuses as $status)
-				$this->_statuses[$status['status_name']] = $status['status_id'];
-	}
-
-	/**
 	 * Projects::save()
 	 * 
 	 * Save a new or edited project
 	 * @return void
 	 */
-	public static function save()
+	public function save()
 	{
 		global $smcFunc;
 
@@ -516,7 +453,7 @@ class Projects
 		if (!empty($_REQUEST['project_id']))
 		{
 			$smcFunc['db_query']('','
-				UPDATE IGNORE {db_prefix}taskspp_projects
+				UPDATE {db_prefix}taskspp_projects
 				SET
 					project_title = {string:project_title},
 					project_picture = {string:project_picture},
@@ -577,7 +514,7 @@ class Projects
 			}
 
 			$status = 'added';
-			$smcFunc['db_insert']('ignore',
+			$smcFunc['db_insert']('',
 				'{db_prefix}taskspp_projects',
 				$pp_columns,
 				$pp_values,
@@ -598,7 +535,7 @@ class Projects
 	 * @param string $sort The sort order
 	 * @param string $query Any additional queries
 	 * @param array $values The values to be used in the query
-	 * @return void
+	 * @return array The projects
 	 */
 	public static function getProjects($start, $limit, $sort, $query = null, $values = null)
 	{
@@ -619,12 +556,17 @@ class Projects
 			SELECT
 				p.project_id, p.project_title, p.project_picture, p.view_type,
 				p.category_id, p.start_date, p.end_date, p.description, p.additional_details,
-				p.type_id, p.status_id, c.category_name, t.type_name, s.status_name
+				p.type_id, p.status_id, c.category_name, t.type_name, s.status_name,
+				COUNT(DISTINCT  tk.task_id) AS total_tasks,
+				SUM(ts.hours_worked) AS hours_worked, SUM(ts.minutes_worked) AS minutes_worked
 			FROM {db_prefix}taskspp_projects AS p
+				LEFT JOIN {db_prefix}taskspp_tasks AS tk ON (tk.project_id = p.project_id)
+				LEFT JOIN {db_prefix}taskspp_timesheet AS ts ON (ts.task_id = tk.task_id)
 				LEFT JOIN {db_prefix}taskspp_project_categories AS c ON (c.category_id = p.category_id)
 				LEFT JOIN {db_prefix}taskspp_project_types AS t ON (t.type_id = p.type_id)
 				LEFT JOIN {db_prefix}taskspp_project_status AS s ON (s.status_id = p.status_id) ' . (!empty($query) ? 
 				$query : '') . '
+			GROUP BY p.project_id, c.category_name, t.type_name, s.status_name
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:limit}',
 			$data

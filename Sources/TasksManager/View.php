@@ -2,7 +2,7 @@
 
 /**
  * @package Tasks Manager
- * @version 1.0
+ * @version 1.1
  * @author Diego Andrés <diegoandres_cortes@outlook.com>
  * @copyright Copyright (c) 2022, SMF Tricks
  * @license MIT
@@ -33,7 +33,7 @@ class View
 	function __construct()
 	{
 		// Language
-		loadLanguage('TasksManager/');
+		Integration::language();
 
 		// Template
 		loadTemplate('TasksManager');
@@ -254,6 +254,29 @@ class View
 		];
 		if (isset($txt['TasksManager_' . (!empty($title) ? $title : $action) . '_desc']))
 			$context[$context['tasks_menu_name']]['tab_data']['description'] = $txt['TasksManager_' . (!empty($title) ? $title : $action) . '_desc'];
+	}
+
+	/**
+	 * View::itemSelect()
+	 * 
+	 * Sorts a list of items for the select
+	 * 
+	 * @param array $list The list of items
+	 * @param string $key The key to sort by
+	 * @param string $value The value to sort by
+	 * @param string|null $none_txt The text to use for none
+	 * @return array The sorted list of items
+	 */
+	public static function itemSelect($list, $key, $value, $none_txt = null)
+	{
+		if (isset($none_txt))
+			$sort = [
+				0 => $none_txt
+			];
+		foreach ($list as $item)
+			$sort[$item[$key]] = $item[$value];
+
+		return $sort;
 	}
 
 	/**

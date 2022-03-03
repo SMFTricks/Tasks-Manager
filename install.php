@@ -72,12 +72,12 @@
 				[
 					'name' => 'description',
 					'type' => 'varchar',
-					'size' => 255,
+					'size' => 450,
 				],
 				[
 					'name' => 'additional_details',
 					'type' => 'varchar',
-					'size' => 255,
+					'size' => 800,
 				],
 				[
 					'name' => 'type_id',
@@ -119,14 +119,6 @@
 					'size' => 8,
 					'auto' => true,
 					'unsigned' => true,
-				],
-				[
-					'name' => 'topic_id',
-					'type' => 'mediumint',
-					'size' => 8,
-					'unsigned' => true,
-					'not_null' => true,
-					'default' => 0,
 				],
 				[
 					'name' => 'project_id',
@@ -361,4 +353,17 @@
 		// Installing
 		foreach ($tables as $table)
 		$smcFunc['db_create_table']($table['table_name'], $table['columns'], $table['indexes'], $table['parameters'], $table['if_exists'], $table['error']);
+
+		// Add a tasks column for the topics
+		$smcFunc['db_add_column']('
+			{db_prefix}topics',
+			[
+				'name' => 'tasks_task_id',
+				'type' => 'mediumint',
+				'size' => 8,
+				'unsigned' => true,
+				'default' => 0,
+				'not_null' => false,
+			]
+		);
 	}
