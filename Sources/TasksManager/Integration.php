@@ -142,21 +142,15 @@ class Integration
 		global $scripturl, $context;
 		static $topic_task;
 
+		// Don't do anything if we don't have the permission
+		if (!allowedTo('tasksmanager_can_edit'))
+			return;	
+			
 		// Language
 		loadLanguage('TasksManager/');
 
-		// Don't do anything if we don't have the permission
-		if (!allowedTo('tasksmanager_can_edit'))
-			return;
-
-		// Find if this topic is in any task
-		if (($topic_task = cache_get_data('tasksmanager_topic_tasks_' . $context['current_topic'], 3600)) === null)
-		{
-			// Get tasks with this topic
-			$topic_task = Tasks::getTasks(0, 100000, 'tk.task_id', 'WHERE tk.topic_id = {int:topic}', ['topic' => $context['current_topic']]);
-
-			cache_put_data('tasksmanager_topic_tasks_' . $context['current_topic'], $topic_task, 3600);
-		}
+		// Get tasks with this topic
+		$topic_task = Tasks::getTasks(0, 100000, 'tk.task_id', 'WHERE tk.topic_id = {int:topic}', ['topic' => $context['current_topic']]);
 
 		// Add a topic to a task
 		if (empty($topic_task))
