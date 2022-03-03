@@ -2,7 +2,7 @@
 
 /**
  * @package Tasks Manager
- * @version 1.0
+ * @version 1.1
  * @author Diego Andrés <diegoandres_cortes@outlook.com>
  * @copyright Copyright (c) 2022, SMF Tricks
  * @license MIT
@@ -18,22 +18,7 @@ class Status
 	/**
 	 * @var array The subactions of the page
 	 */
-	private $_subactions = [];
-
-	function __construct()
-	{
-		// Can you manage tasks?
-		isAllowedTo('tasksmanager_can_edit');
-
-		// Subactions
-		$this->_subactions = [
-			'index' => 'list',
-			'add' => 'manage',
-			'edit' => 'manage',
-			'save' => 'save',
-			'delete' => 'delete',
-		];
-	}
+	private $_subactions;
 
 	/**
 	 * Status::main()
@@ -45,6 +30,9 @@ class Status
 	{
 		global $context, $txt;
 
+		// Can you manage tasks?
+		isAllowedTo('tasksmanager_can_edit');
+
 		// Page setup
 		View::page_setup('status', null, 'statuses', null, 'warning');
 
@@ -52,6 +40,15 @@ class Status
 		$context[$context['tasks_menu_name']]['tab_data']['tabs'] = [
 			'index' => ['description' => $txt['TasksManager_status_list_desc']],
 			'add' => ['description' => $txt['TasksManager_status_add_desc']],
+		];
+
+		// Subactions
+		$this->_subactions = [
+			'index' => 'list',
+			'add' => 'manage',
+			'edit' => 'manage',
+			'save' => 'save',
+			'delete' => 'delete',
 		];
 
 		// Get the current action
