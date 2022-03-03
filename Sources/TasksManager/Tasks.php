@@ -664,18 +664,24 @@ class Tasks
 		View::page_setup('tasks', 'manage', 'add_topic_task',  '?action=tasksmanager;area=tasks;sa=' . $_REQUEST['sa'] . (!empty($_REQUEST['id']) ? ';id=' . $_REQUEST['id'] : '') . ';' . $context['session_var'] . '=' . $context['session_id'], 'approve');
 
 		// Add some topic context
-		$request = $smcFunc['db_query']('', '
-			SELECT
-				t.id_topic, m.subject
-			FROM {db_prefix}topics AS t
-				LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
-			WHERE t.id_topic = {int:id}',
-			[
-				'id' => (int) $_REQUEST['id'],
-			]
-		);
-		list ($context['task_topic_id'], $context['task_topic_subject']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		if (($context['task_topic_id'] = cache_get_data('tasks_addtopic_' . $_REQUEST['id'], 3600)) === null)
+		{
+			$request = $smcFunc['db_query']('', '
+				SELECT
+					t.id_topic, m.subject
+				FROM {db_prefix}topics AS t
+					LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
+				WHERE t.id_topic = {int:id}',
+				[
+					'id' => (int) $_REQUEST['id'],
+				]
+			);
+			list ($context['task_topic_id'], $context['task_topic_subject']) = $smcFunc['db_fetch_row']($request);
+			$smcFunc['db_free_result']($request);
+
+			cache_put_data('tasks_addtopic_' . $_REQUEST['id'], $context['task_topic_id'], 3600);
+		}
+			
 		$context['TasksManager_adding_topic'] = $txt['TasksManager_adding_topic_task'];
 
 		// Check again for the topic
