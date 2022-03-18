@@ -175,7 +175,7 @@
 				],
 				[
 					'type' => 'index',
-					'columns' => ['task_cat_id', 'task_status_id', 'topic_id', 'project_id']
+					'columns' => ['task_cat_id', 'task_status_id', 'project_id']
 				],
 			],
 			'if_exists' => 'ignore',

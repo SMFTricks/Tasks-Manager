@@ -1,5 +1,8 @@
 # Changelog
 
+#### 1.1.1 - 17 March 2022
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed wrong index for tasks column in install file.
+
 #### 1.1 - 03 March 2022
 - ![Translation](https://smftricks.com/assets/changelog/language.png) Russian translation provided by [Bugo](https://www.simplemachines.org/community/index.php?action=profile;u=229017)
 - ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) Added 'Who" action integration.
