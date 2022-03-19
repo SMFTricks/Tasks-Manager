@@ -1,5 +1,10 @@
 # Changelog
 
+#### 1.1.2 - 19 March 2022
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed projects issue.
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed 'who' actions bug.
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed issue with install file.
+
 #### 1.1.1 - 17 March 2022
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed wrong index for tasks column in install file.
 
