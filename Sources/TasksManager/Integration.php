@@ -191,7 +191,11 @@ class Integration
 	 */
 	public function whos_online_after(&$urls, &$data)
 	{
-		global $smcFunc, $txt, $scripturl, $modSettings;
+		global $smcFunc, $txt, $scripturl, $modSettings, $context;
+
+		// Only in the who
+		if (!isset($context['current_action']) || empty($context['current_action']) || $context['current_action'] != 'who')
+			return;
 
 		// Load language
 		$this->language();
