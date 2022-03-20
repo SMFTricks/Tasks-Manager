@@ -1,5 +1,9 @@
 # Changelog
 
+#### 1.1.4 - 20 March 2022
+- ![Translation](https://smftricks.com/assets/changelog/language.png) Turkish translation provided by [gevv](https://www.simplemachines.org/community/index.php?action=profile;u=155076)
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed wrong links when deleting categories.
+
 #### 1.1.3 - 19 March 2022
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed more issues with projects.
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed a bug in the category type selection.

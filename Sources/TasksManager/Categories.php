@@ -140,7 +140,7 @@ class Categories
 					],
 					'data' => [
 						'sprintf' => [
-							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=categories;sa=' . (!isset($_REQUEST['sa']) || $_REQUEST['sa'] == 'projects' ? 'editp' : 'edit') . ';id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['TasksManager_category_delete_confirm'] . '\');">' . $txt['delete'] . '</a>',
+							'format' => '<a href="' . $scripturl . '?action=tasksmanager;area=categories;sa=' . (!isset($_REQUEST['sa']) || $_REQUEST['sa'] == 'projects' ? 'deletep' : 'delete') . ';id=%1$s;' . $context['session_var'] . '=' . $context['session_id'] . '" onclick="return confirm(\'' . $txt['TasksManager_category_delete_confirm'] . '\');">' . $txt['delete'] . '</a>',
 							'params' => [
 								'category_id' => false,
 							],
