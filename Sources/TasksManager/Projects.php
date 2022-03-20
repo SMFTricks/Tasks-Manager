@@ -566,7 +566,9 @@ class Projects
 				LEFT JOIN {db_prefix}taskspp_project_types AS t ON (t.type_id = p.type_id)
 				LEFT JOIN {db_prefix}taskspp_project_status AS s ON (s.status_id = p.status_id) ' . (!empty($query) ? 
 				$query : '') . '
-			GROUP BY p.project_id, p.project_title, c.category_name, t.type_name, s.status_name
+			GROUP BY p.project_id, p.project_title, p.project_title, p.project_picture, p.view_type,
+			p.category_id, p.start_date, p.end_date, p.description, p.additional_details,
+			p.type_id, p.status_id, c.category_name, t.type_name, s.status_name
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:limit}',
 			$data
