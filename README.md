@@ -29,6 +29,7 @@ Tasks Manager lets you configure projects along with assigning individual or mul
 ### Localization
 - ![English](https://www.simplemachines.org/site_images/lang/english.gif) English
 - ![Russian](https://www.simplemachines.org/site_images/lang/russian.gif) Russian by [Bugo](https://www.simplemachines.org/community/index.php?action=profile;u=229017)
+- ![Turkish](https://www.simplemachines.org/site_images/lang/turkish.gif) Turkish by [gevv](https://www.simplemachines.org/community/index.php?action=profile;u=155076)
 ---
 ### [Changelog](https://github.com/SMFTricks/Tasks-Manager/blob/main/CHANGELOG.md)
 ### [GitHub](https://github.com/SMFTricks/Tasks-Manager)
