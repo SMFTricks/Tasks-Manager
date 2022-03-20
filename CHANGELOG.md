@@ -1,5 +1,9 @@
 # Changelog
 
+#### 1.1.3 - 19 March 2022
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed more issues with projects.
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed a bug in the category type selection.
+
 #### 1.1.2 - 19 March 2022
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed projects issue.
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed 'who' actions bug.
