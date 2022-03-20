@@ -207,8 +207,8 @@ class Categories
 				'value' => '',
 				'type' => 'select',
 				'options' => [
-					$txt['TasksManager_projects'] => 'project',
-					$txt['TasksManager_tasks'] => 'task',
+					'project' => $txt['TasksManager_projects'],
+					'task' => $txt['TasksManager_tasks'],
 				],
 			],
 		];
