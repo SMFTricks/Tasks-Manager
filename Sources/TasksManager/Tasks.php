@@ -553,7 +553,9 @@ class Tasks
 				LEFT JOIN {db_prefix}taskspp_task_categories AS c ON (c.task_cat_id = tk.task_cat_id)
 				LEFT JOIN {db_prefix}taskspp_project_status AS s ON (s.status_id = tk.task_status_id) ' . (!empty($query) ? 
 				$query : '') . '
-			GROUP BY tk.task_id, c.category_name, s.status_name, p.project_title, t.id_topic
+			GROUP BY tk.task_id, tk.task_name, tk.task_cat_id, tk.project_id,
+			tk.start_date, tk.end_date, tk.task_desc, tk.task_status_id, tk.estimated_hrs,
+			c.category_name, s.status_name, p.project_title, t.id_topic
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:limit}',
 			$data
