@@ -1,5 +1,8 @@
 # Changelog
 
+#### 1.1.6 - 19 August 2022
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed issue with who actions/hook.
+
 #### 1.1.5 - 21 March 2022
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed some more group by 'issues'.
 
