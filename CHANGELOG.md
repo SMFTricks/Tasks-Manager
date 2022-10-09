@@ -1,5 +1,9 @@
 # Changelog
 
+#### 1.1.7 - 09 October 2022
+- ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) New field to add comments in bookings.
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed tasks filter in booking action.
+
 #### 1.1.6 - 19 August 2022
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed issue with who actions/hook.
 

@@ -203,6 +203,7 @@ $txt['TasksManager_no_booking'] = 'No booking selected.';
 $txt['TasksManager_no_booking_time'] = 'No time entered.';
 $txt['TasksManager_no_time_worked'] = 'No time worked entered.';
 $txt['TasksManager_no_total_time'] = 'None';
+$txt['TasksManager_booking_comments_too_long'] = 'The comments are limited to 80 characters.';
 
 // Who
 $txt['TasksManager_who_viewing_tasksmanager'] = 'Viewing the <a href="%1$s">%2$s</a>.';
