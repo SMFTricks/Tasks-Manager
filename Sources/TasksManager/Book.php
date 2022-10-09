@@ -271,6 +271,10 @@ class Book
 		if (!isset($_REQUEST['time_worked_hours']) && !isset($_REQUEST['time_worked_minutes']))
 			fatal_lang_error('TasksManager_no_time_worked', false);
 
+		// Comments are limited to 80 characters
+		if (isset($_REQUEST['time_comments']) && strlen($_REQUEST['time_comments']) > 80)
+			fatal_lang_error('TasksManager_booking_comments_too_long', false);
+
 		// Book the time
 		$smcFunc['db_insert']('',
 			'{db_prefix}taskspp_timesheet',
