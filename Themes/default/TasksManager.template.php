@@ -228,7 +228,7 @@ function template_list_selector_above()
 
 			foreach ($context['tasks_tasks_list'] as $task)
 				echo '
-					<option value="', $task['task_id'], '">', $task['task_name'], '</option>';
+					<option value="', $task['task_id'], '"'. (isset($_REQUEST['task']) && $_REQUEST['task'] == $task['task_id'] ? ' selected="selected"' : ''). '>', $task['task_name'], '</option>';
 
 			echo  '
 				</optgroup>
