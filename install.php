@@ -337,6 +337,13 @@
 					'unsigned' => true,
 					'size' => 3,
 					'default' => 0,
+				],
+				[
+					'name' => 'time_comments',
+					'type' => 'varchar',
+					'size' => 80,
+					'not_null' => false,
+					'default' => null,
 				]
 			],
 			'indexes' => [

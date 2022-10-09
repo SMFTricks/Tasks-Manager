@@ -141,6 +141,16 @@ class Book
 						'reverse' => 'time_worked DESC',
 					],
 				],
+				'comments' =>[
+					'header' => [
+						'value' => $txt['TasksManager_booking_comments'],
+						'class' => 'lefttext',
+					],
+					'data' => [
+						'db' => 'time_comments',
+						'class' => 'lefttext',
+					],
+				],
 				'date' => [
 					'header' => [
 						'value' => $txt['TasksManager_booking_date'],
@@ -225,6 +235,10 @@ class Book
 				'type' => 'number',
 				'max' => 59,
 			],
+			'time_comments' => [
+				'label' => $txt['TasksManager_booking_comments'],
+				'type' => 'textarea',
+			],
 		];
 
 		// Add the session
@@ -265,12 +279,14 @@ class Book
 				'ts_date' => 'int',
 				'hours_worked' => 'int',
 				'minutes_worked' => 'int',
+				'time_comments' => 'string',
 			],
 			[
 				(int) $_REQUEST['task_id'],
 				time(),
 				(int) !empty($_REQUEST['time_worked_hours']) ? $_REQUEST['time_worked_hours'] : 0,
 				(int) !empty($_REQUEST['time_worked_minutes']) ? ($_REQUEST['time_worked_minutes'] > 59 ? 59 : $_REQUEST['time_worked_minutes']) : 0,
+				!empty($_REQUEST['time_comments']) ? $smcFunc['htmlspecialchars']($_REQUEST['time_comments'], ENT_QUOTES) : '',
 			],
 			[]
 		);
@@ -307,7 +323,7 @@ class Book
 
 		$request = $smcFunc['db_query']('', '
 			SELECT
-				ts.timesheet_id, ts.task_id, ts.ts_date, ts.hours_worked, ts.minutes_worked, tk.task_name
+				ts.timesheet_id, ts.task_id, ts.ts_date, ts.hours_worked, ts.minutes_worked, ts.time_comments, tk.task_name
 			FROM {db_prefix}taskspp_timesheet AS ts
 				LEFT JOIN {db_prefix}taskspp_tasks AS tk ON (tk.task_id = ts.task_id) ' . (!empty($query) ? 
 				$query : '') . '

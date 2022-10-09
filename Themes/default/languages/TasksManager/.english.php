@@ -138,6 +138,8 @@ $txt['TasksManager_booking_time_hours'] = 'Hours';
 $txt['TasksManager_booking_time_minutes'] = 'Minutes';
 $txt['TasksManager_booking_added'] = 'Booking added';
 $txt['TasksManager_booking_deleted'] = 'Booking deleted';
+$txt['TasksManager_booking_comments'] = 'Comments';
+$txt['TasksManager_booking_comments_desc'] = 'Additional comments or notes for this booking.';
 
 // Other options
 $txt['TasksManager_add_topic_task'] = 'Add to a Task';
