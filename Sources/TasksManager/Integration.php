@@ -191,35 +191,32 @@ class Integration
 	 */
 	public function whos_online_after(&$urls, &$data)
 	{
-		global $smcFunc, $txt, $scripturl, $modSettings;
+		global $smcFunc, $txt, $scripturl, $modSettings, $user_info;
 
 		// Load language
 		$this->language();
 
-		// Are we in who action?
-		if (!isset($_REQUEST['action']) || empty($_REQUEST['action']) || $_REQUEST['action'] !== 'who')
-			return;
-
 		// Go through the urls
-		foreach ($urls as $key => $url)
+		$url_list = (!is_array($urls) ? [[$urls, $user_info['id']]] : $urls);
+		foreach ($url_list as $key => $url)
 		{
 			// Get the actual actions
 			$actions = $smcFunc['json_decode']($url[0], true);
 
 			// Any actions?
-			if (empty($actions))
+			if ($actions === false)
 				continue;
 
 			// We only want tasksmanager actions here
 			if (!isset($actions['action']) || $actions['action'] !== 'tasksmanager')
 				continue;
 
-			// Can they see the tasks manager?
+			// They can't see anything, yet
+			$data[$key] = $txt['who_hidden'];
+
+			// Can they view the tasks manager?
 			if (!allowedTo('tasksmanager_can_view'))
-			{
-				$data[$key] = $txt['who_hidden'];
 				continue;
-			}
 
 			// Use some defaults
 			$default_url = $scripturl . '?action=' . $actions['action'];
@@ -313,7 +310,7 @@ class Integration
 				}
 			}
 
-			// Setup who is they are allowed to see that area
+			// Setup who if they are allowed to see that area
 			if (!empty($allowed_area))
 				$data[$key] = sprintf($default_txt, $default_url);
 		}

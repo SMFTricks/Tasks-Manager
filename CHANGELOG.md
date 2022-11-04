@@ -1,5 +1,8 @@
 # Changelog
 
+#### 1.1.8 - 04 November 2022
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed issue when viewing the Online list.
+
 #### 1.1.7 - 09 October 2022
 - ![New Feature](https://smftricks.com/assets/changelog/tag--plus.png) New field to add comments in bookings.
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed tasks filter in booking action.
