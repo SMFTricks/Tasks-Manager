@@ -133,6 +133,7 @@ $txt['TasksManager_booking_log_desc'] = 'Here you can see the time log for the t
 $txt['TasksManager_booking_booktime'] = 'Book Time';
 $txt['TasksManager_booking_booktime_desc'] = 'Here you can book the time for the tasks.';
 $txt['TasksManager_booking_date'] = 'Booking Date';
+$txt['TasksManager_booking_date_desc'] = 'Leave empty to use today\'s date.';
 $txt['TasksManager_booking_time'] = 'Time';
 $txt['TasksManager_booking_time_hours'] = 'Hours';
 $txt['TasksManager_booking_time_minutes'] = 'Minutes';
