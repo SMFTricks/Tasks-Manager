@@ -87,7 +87,6 @@ class View
 		$this->_tasks_areas = [
 			'projects' => [
 				'title' => $txt['TasksManager_projects'],
-				'description' => 'Testing',
 				'areas' => [
 					'projects' => [
 						'label' => $txt['TasksManager_projects'],
