@@ -4,7 +4,7 @@
 
 [b][size=5]Tasks Manager[/size][/b]
 [size=0.8em]Developed by [url="https://smftricks.com/index.php?action=profile;u=1"]Diego Andrés[/url]
-Designed by [url=https://www.databasedreams.co.uk/]Database Dreams[/url][/size]
+Sponsored by [url=https://www.databasedreams.co.uk/]Database Dreams[/url][/size]
 
 [hr]
 
@@ -45,5 +45,6 @@ Designed by [url=https://www.databasedreams.co.uk/]Database Dreams[/url][/size]
 [img]https://www.simplemachines.org/site_images/lang/turkish.gif[/img] Turkish by [url="https://www.simplemachines.org/community/index.php?action=profile;u=155076"]gevv[/url]
 [hr]
 
+[size=3][url="https://crowdin.com/project/smf-tasks-manager"][color=#495475]Crowdin[/color][/url][/size]
 [size=3][url="https://github.com/SMFTricks/Tasks-Manager/blob/main/CHANGELOG.md"][color=#cc5d31]Changelog[/color][/url][/size]
 [size=3][url="https://github.com/SMFTricks/Tasks-Manager"][color=#5e2b82]GitHub[/color][/url][/size]

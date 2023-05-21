@@ -4,7 +4,7 @@
 ![License](https://img.shields.io/badge/License-MIT-248049) ![Hooks Only](https://img.shields.io/badge/Hooks%20Only-Yes-6041a3) ![SMF 2.1](https://img.shields.io/badge/SMF-2.1-3f73a0)
 
 * Developed by [Diego Andrés](https://github.com/DiegoAndresCortes)
-* Designed by [Database Dreams](https://www.databasedreams.co.uk/)
+* Sponsored by [Database Dreams](https://www.databasedreams.co.uk/)
 
 ## Introduction
 Tasks Manager lets you configure projects along with assigning individual or multiple tasks to each project. You can create categories and statuses for both projects and categories and filter through them.
@@ -31,5 +31,6 @@ Tasks Manager lets you configure projects along with assigning individual or mul
 - ![Russian](https://www.simplemachines.org/site_images/lang/russian.gif) Russian by [Bugo](https://www.simplemachines.org/community/index.php?action=profile;u=229017)
 - ![Turkish](https://www.simplemachines.org/site_images/lang/turkish.gif) Turkish by [gevv](https://www.simplemachines.org/community/index.php?action=profile;u=155076)
 ---
+### [Crowdin](https://crowdin.com/project/smf-tasks-manager)
 ### [Changelog](https://github.com/SMFTricks/Tasks-Manager/blob/main/CHANGELOG.md)
 ### [GitHub](https://github.com/SMFTricks/Tasks-Manager)
