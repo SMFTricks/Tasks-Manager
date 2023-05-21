@@ -1,5 +1,9 @@
 # Changelog
 
+#### 1.1.9 - 20 May 2023
+- ![Improvement](https://smftricks.com/assets/changelog/tag--pencil.png) Added new field to setup a different date when booking.
+- ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed exceeding length issue for hours booked.
+
 #### 1.1.8 - 04 November 2022
 - ![Bug Fix](https://smftricks.com/assets/changelog/bug--minus.png) Fixed issue when viewing the Online list.
 
