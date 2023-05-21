@@ -210,7 +210,7 @@ class Book
 	 */
 	public function manage()
 	{
-		global $context, $scripturl, $txt;
+		global $context, $scripturl, $txt, $modSettings;
 
 		// Page setup
 		View::page_setup('booking', 'manage', 'booking_' . $_REQUEST['sa'], '?action=tasksmanager;area=booking;sa=' . $_REQUEST['sa'], 'settings');
@@ -218,6 +218,43 @@ class Book
 		// Any tasks?
 		if (empty($this->_tasks))
 			fatal_lang_error('TasksManager_no_tasks', false);
+
+		loadCSSFile('jquery-ui.datepicker.css', [], 'smf_datepicker');
+		loadJavaScriptFile('jquery-ui.datepicker.min.js', ['defer' => true], 'smf_datepicker');
+		loadJavaScriptFile('jquery.timepicker.min.js', ['defer' => true], 'smf_timepicker');
+		loadJavaScriptFile('datepair.min.js', ['defer' => true], 'smf_datepair');
+		addInlineJavaScript('
+			$("#event_time_input .date_input").datepicker({
+				dateFormat: "yy-mm-dd",
+				autoSize: true,
+				isRTL: ' . ($context['right_to_left'] ? 'true' : 'false') . ',
+				constrainInput: true,
+				showAnim: "",
+				showButtonPanel: false,
+				minDate: "' . $modSettings['cal_minyear'] . '-01-01",
+				maxDate: "' . $modSettings['cal_maxyear'] . '-12-31",
+				yearRange: "' . $modSettings['cal_minyear'] . ':' . $modSettings['cal_maxyear'] . '",
+				hideIfNoPrevNext: true,
+				monthNames: ["' . implode('", "', (array) $txt['months_titles']) . '"],
+				monthNamesShort: ["' . implode('", "', (array) $txt['months_short']) . '"],
+				dayNames: ["' . implode('", "', (array) $txt['days']) . '"],
+				dayNamesShort: ["' . implode('", "', (array) $txt['days_short']) . '"],
+				dayNamesMin: ["' . implode('", "', (array) $txt['days_short']) . '"],
+				prevText: "' . $txt['prev_month'] . '",
+				nextText: "' . $txt['next_month'] . '",
+			});
+			var date_entry = document.getElementById("event_time_input");
+			var date_entry_pair = new Datepair(date_entry, {
+				dateClass: "date_input",
+				parseDate: function (el) {
+					var utc = new Date($(el).datepicker("getDate"));
+					return utc && new Date(utc.getTime() + (utc.getTimezoneOffset() * 60000));
+				},
+				updateDate: function (el, v) {
+					$(el).datepicker("setDate", new Date(v.getTime() - (v.getTimezoneOffset() * 60000)));
+				}
+			});
+		', true);
 
 		// Settings
 		$context['tasks_pp_settings'] = [
@@ -239,6 +276,11 @@ class Book
 				'label' => $txt['TasksManager_booking_comments'],
 				'type' => 'textarea',
 			],
+			'time_booked' => [
+				'label' => $txt['TasksManager_booking_date'],
+				'description' => $txt['TasksManager_booking_date_desc'],
+				'type' => 'date',
+			]
 		];
 
 		// Add the session
@@ -275,6 +317,12 @@ class Book
 		if (isset($_REQUEST['time_comments']) && strlen($_REQUEST['time_comments']) > 80)
 			fatal_lang_error('TasksManager_booking_comments_too_long', false);
 
+		// Convert the date to unix
+		if (isset($_REQUEST['time_booked']) && !empty($_REQUEST['time_booked']))
+			$time_booked = strtotime($_REQUEST['time_booked']);
+		else
+			$time_booked = time();
+
 		// Book the time
 		$smcFunc['db_insert']('',
 			'{db_prefix}taskspp_timesheet',
@@ -287,8 +335,8 @@ class Book
 			],
 			[
 				(int) $_REQUEST['task_id'],
-				time(),
-				(int) !empty($_REQUEST['time_worked_hours']) ? $_REQUEST['time_worked_hours'] : 0,
+				(int) $time_booked,
+				(int) !empty($_REQUEST['time_worked_hours']) ? ($_REQUEST['time_worked_hours'] > 255 ? 255 : $_REQUEST['time_worked_hours']) : 0,
 				(int) !empty($_REQUEST['time_worked_minutes']) ? ($_REQUEST['time_worked_minutes'] > 59 ? 59 : $_REQUEST['time_worked_minutes']) : 0,
 				!empty($_REQUEST['time_comments']) ? $smcFunc['htmlspecialchars']($_REQUEST['time_comments'], ENT_QUOTES) : '',
 			],
